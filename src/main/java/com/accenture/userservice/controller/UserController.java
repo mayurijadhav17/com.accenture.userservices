@@ -1,7 +1,6 @@
 package com.accenture.userservice.controller;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.accenture.userservice.model.User;
@@ -18,16 +17,11 @@ public class UserController {
 	
 	@PostMapping()
 	public User addUser(@RequestBody User user) {
-		
-		
 		return userService.createUser(user);
 	}
 
 	@GetMapping("/{id}")
 	public User getUserById(@PathVariable int id) {
-		
-		
-		
 		return userService.getUserById(id);
 	}
 
