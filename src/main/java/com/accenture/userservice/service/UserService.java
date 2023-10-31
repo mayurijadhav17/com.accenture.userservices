@@ -1,5 +1,6 @@
 package com.accenture.userservice.service;
 
+import com.accenture.userservice.dto.UserDTO;
 import com.accenture.userservice.exception.ResourceNotFoundException;
 import com.accenture.userservice.model.User;
 import com.accenture.userservice.repo.UserRepository;
@@ -21,7 +22,7 @@ public class UserService {
 	}
 	
 	public User getUserById(int id) {
-	return	userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User Not found with id = " + id));
+		return	userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User Not found with id = " + id));
 	}
 	
 	public List<User> getUsers() {
@@ -31,7 +32,16 @@ public class UserService {
 		if (!userRepository.existsById(id)) {
 			throw new ResourceNotFoundException("User Not Found for id "+ id );
 		}
-		userRepository.deleteById(id);		
+		userRepository.deleteById(id);
 	}
-
+	public User UpdateUserDetails(User userRes, int id) {
+		return userRepository.findById(id).map(user -> {
+			user.setName(userRes.getName());
+			user.setAddress(userRes.getAddress());
+			user.setEmail(userRes.getEmail());
+			user.setPhonenumber(userRes.getPhonenumber());
+			return userRepository.save(user);
+		}).orElseThrow(() -> new ResourceNotFoundException("User Not Found For for ID :: " + id));
+	}
+	
 }

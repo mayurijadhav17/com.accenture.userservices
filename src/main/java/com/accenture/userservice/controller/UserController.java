@@ -28,8 +28,12 @@ public class UserController {
 	@GetMapping()
 	public List<User> getAllUsers() {
 		return userService.getUsers();
-	}	
-
+	}
+	
+	@PostMapping("/update/{id}")
+	public User updateUser(@RequestBody User user,@PathVariable int id) {
+		return userService.UpdateUserDetails(user,id);
+	}
 	@DeleteMapping("{id}")
 	public void deleteUser(@PathVariable int id) {
 		 userService.deleteUserById(id);
