@@ -2,7 +2,6 @@ package com.accenture.userservice.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import java.util.List;
 
 @Entity
 @Data
@@ -14,9 +13,8 @@ public class User {
 	private Long id;
 	private String name;
 	private String address;
+ @Column(unique=true)
 	private String email;	
 	private String phonenumber;
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "userid")
-	private List<Comment> commentsList;
+
 }
