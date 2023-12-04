@@ -13,8 +13,9 @@ public class User {
 	private Long id;
 	private String name;
 	private String address;
- @Column(unique=true)
-	private String email;	
+	private String email;
 	private String phonenumber;
-
+@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+@JoinColumn(name = "fk_org_id", referencedColumnName = "id")
+private Organisation organisation;
 }

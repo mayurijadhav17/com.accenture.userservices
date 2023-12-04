@@ -4,12 +4,11 @@ import com.accenture.userservice.model.Organisation;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
-import java.util.UUID;
 
 public interface OrganisationRepository extends JpaRepository<Organisation, Integer> {
-Optional<Organisation> findById(UUID id);
+Optional<Organisation> findById(Long id);
 
-boolean existsById(UUID id);
+boolean existsById(Long id);
 
-void deleteById(UUID id);
+void deleteById(Long id);
 }

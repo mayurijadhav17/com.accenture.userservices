@@ -3,10 +3,10 @@ package com.accenture.userservice.controller;
 import com.accenture.userservice.model.Organisation;
 import com.accenture.userservice.service.OrganisationService;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @NoArgsConstructor(force = true)
 @RestController
@@ -15,13 +15,17 @@ public class OrganisationController {
 
 private final OrganisationService organisationService;
 
+@Autowired
+public OrganisationController(OrganisationService organisationService) {
+	this.organisationService = organisationService;
+}
 @PostMapping
 public Organisation addOrganisation(@RequestBody Organisation organisation) {
 	return organisationService.create(organisation);
 }
 
 @GetMapping("/{id}")
-public Organisation getOrganisationById(@PathVariable UUID id) {
+public Organisation getOrganisationById(@PathVariable Long id) {
 	return organisationService.getOrganisationById(id);
 }
 
@@ -31,7 +35,7 @@ public List<Organisation> getAllOrganisation() {
 }
 
 @DeleteMapping("{id}")
-public void deleteOrganisation(@PathVariable UUID id) {
+public void deleteOrganisation(@PathVariable Long id) {
 	organisationService.deleteById(id);
 }
 }

@@ -8,5 +8,11 @@ spring:
   h2:
     console.enabled: true
 
+  liquibase:
+    enabled: true
+    user: sa
+    password:
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+
   profiles:
     active: dev
