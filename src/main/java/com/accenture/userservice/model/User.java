@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "Users")
+@Table(name = "users")
 public class User {
 
 	@Id
@@ -15,7 +15,5 @@ public class User {
 	private String address;
 	private String email;
 	private String phonenumber;
-@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-@JoinColumn(name = "fk_org_id", referencedColumnName = "id")
-private Organisation organisation;
+ private Long orgnisation_id;
 }

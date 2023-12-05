@@ -41,4 +41,13 @@ public User updateUser(@RequestBody User user, @PathVariable Long id) {
 public void deleteUser(@PathVariable Long id) {
 	userService.deleteUserById(id);
 }
+
+@PostMapping("/emailConfirmation/{email}/{code}")
+public String emailConfirmation(@PathVariable String email,@PathVariable String code) {
+return userService.emailConfirmation(email,code);
+}
+@GetMapping ("/getEmailCode")
+public String getEmailCode() {
+	return userService.getEmailCode();
+}
 }

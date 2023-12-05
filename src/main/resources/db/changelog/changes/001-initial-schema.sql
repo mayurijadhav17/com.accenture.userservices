@@ -1,16 +1,25 @@
-CREATE TABLE Users
-(
-    id          Long PRIMARY KEY,
-    name        VARCHAR,
-    address     VARCHAR,
-    email       VARCHAR,
-    phonenumber Varchar
-);
-
-CREATE TABLE Organisation
-(
-    id          Long PRIMARY KEY,
-    name        VARCHAR,
-);
-
-INSERT INTO Organisation(id,name) VALUES (1,'Accenture');
+-- -- liquibase formatted sql
+--
+-- -- changeset liquibase:1
+--
+-- CREATE TABLE organisation
+-- (
+--     id          Long PRIMARY KEY,
+--     name        VARCHAR,
+--     domain      VARCHAR
+-- );
+--
+-- CREATE TABLE users
+-- (
+--     id          Long PRIMARY KEY,
+--     name        VARCHAR,
+--     address     VARCHAR,
+--     email       VARCHAR,
+--     phonenumber Varchar,
+--     organisation_id Varchar
+-- );
+--
+-- INSERT  INTO  organisation  (id,name ,domain)  VALUES  (1,'Accenture','accenture.com');
+-- INSERT  INTO  organisation  (id,name ,domain)  VALUES  (2,'Infosys','infosys.com');
+-- -- INSERT  INTO  users  (id,name ,address,email,phonenumber,organisation_id)  VALUES  (1,'dummy_user1','Netherlands','dummy_user1@accenture.com','+31-798247892','1');
+-- -- INSERT  INTO  users  (id,name ,address,email,phonenumber,organisation_id)   VALUES  (2,'dummy_user2','India','dummy_user2@accenture.com','+91-4354347892','1');

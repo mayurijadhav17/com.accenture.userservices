@@ -16,4 +16,5 @@ boolean existsById(Long id);
 
 void deleteById(Long id);
 
+void deleteByEmail(String email);
 }

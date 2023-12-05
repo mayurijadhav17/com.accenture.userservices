@@ -2,8 +2,7 @@ package com.accenture.userservice.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Data
@@ -13,6 +12,9 @@ public class Organisation {
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long id;
 private String name;
+private String domain;
+
 @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-private Set<User> user;
+@JoinColumn(name = "orgnisation_id")
+private List<User> usersList;
 }
