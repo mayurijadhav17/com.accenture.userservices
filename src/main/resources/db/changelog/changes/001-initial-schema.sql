@@ -1,13 +1,13 @@
 CREATE TABLE organisation
 (
-    id     Long  auto_increment PRIMARY KEY,
+    id     Long auto_increment PRIMARY KEY,
     name   VARCHAR(100),
     domain VARCHAR(100)
 );
 
 CREATE TABLE users
 (
-    id              Long   auto_increment PRIMARY KEY,
+    id              Long auto_increment PRIMARY KEY,
     name            VARCHAR(100),
     address         VARCHAR(100),
     email           VARCHAR(100),
@@ -16,11 +16,11 @@ CREATE TABLE users
 );
 
 ALTER TABLE users
-    ADD CONSTRAINT fk_organisation_user FOREIGN KEY (organisation_id) REFERENCES organisation (id);
+    ADD CONSTRAINT fk_organisation_user FOREIGN KEY (organisation_id) REFERENCES organisation (id) ON DELETE CASCADE;
 
 CREATE TABLE emailVerification
 (
-    id             Long  auto_increment PRIMARY KEY,
+    id             Long auto_increment PRIMARY KEY,
     email          VARCHAR(100),
     total_attempts INTEGER,
     code           VARCHAR(100),
@@ -28,10 +28,10 @@ CREATE TABLE emailVerification
 );
 
 ALTER TABLE emailVerification
-    ADD CONSTRAINT fk_user_emailVerification FOREIGN KEY (user_id) REFERENCES users (id);
+    ADD CONSTRAINT fk_user_emailVerification FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE;
 
 ---Initial Data --
-INSERT INTO organisation( name, domain)
+INSERT INTO organisation(name, domain)
 values ('Accenture', 'accenture.com');
 
 INSERT INTO users(name, address, email, phoneNumber, organisation_id)

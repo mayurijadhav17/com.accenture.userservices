@@ -44,12 +44,10 @@ public User createUser(User user) throws Exception {
 	}
 	user = userRepository.save(user);
 	log.info("user Saved !!");
-	updateEmailVerificationDetails(user);
-	update_User_Orgnisation_FK(user, domain);
-	return user;
+	return update_User_Orgnisation_FK(user, domain);
 }
 
-private User update_User_Orgnisation_FK(User user, String domain)	{
+private User update_User_Orgnisation_FK(User user, String domain) {
 	Organisation organisation = organisationRepository.findByDomain(domain);
 	user.setOrganisation(organisation);
 	return updateUserDetails(user, user.getId());
@@ -80,7 +78,8 @@ public User updateUserDetails(User userRes, Long id) {
 	}).orElseThrow(() -> new ResourceNotFoundException("User Not Found For for ID :: " + id));
 }
 
-private void updateEmailVerificationDetails(User user) throws Exception {
+private void updateEmailVerificationDetails(String email) throws Exception {
+	User user = userRepository.findByEmail(email);
 	String authCode = UUID.randomUUID().toString();
 	Integer totalAttempts = 0;
 	EmailVerificationDetails emailVerificationDetails = new EmailVerificationDetails();
@@ -98,8 +97,12 @@ private String getDomainNameFromEmail(String emailId) {
 	return domain;
 }
 
-public String emailConfirmation(String email, String Inputcode) throws Exception {
-	EmailVerificationDetails emailVerificationDetails = emailVerificationDetailsRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("email  details invalid = " + email));
+public String emailConfirmation(String email, String inputCode) throws Exception {
+
+	if (!emailVerificationDetailsRepository.existsByEmail(email)) {
+		updateEmailVerificationDetails(email);
+	}
+	EmailVerificationDetails emailVerificationDetails = emailVerificationDetailsRepository.findByEmail(email);
 	Integer total_attempts = emailVerificationDetails.getTotal_attempts();
 	String code = emailVerificationDetails.getCode();
 
@@ -107,12 +110,12 @@ public String emailConfirmation(String email, String Inputcode) throws Exception
 	emailVerificationDetails.setTotal_attempts(total_attempts + 1);
 	emailVerificationDetailsRepository.save(emailVerificationDetails);
 
-	if (total_attempts +1>= MAX_ATTEMPTS) {
+	if (total_attempts + 1 >= MAX_ATTEMPTS) {
 		deleteUserById(emailVerificationDetails.getUser().getId());
 		log.info("user record deleted ");
 		throw new Exception("Email Verification 3 attempts Over ,User record deleted!!");
 	}
-	if (!code.equals(Inputcode)) {
+	if (!code.equals(inputCode)) {
 		throw new Exception("Verification code is not matching !!");
 	}
 	return "Email Id verified!!";
