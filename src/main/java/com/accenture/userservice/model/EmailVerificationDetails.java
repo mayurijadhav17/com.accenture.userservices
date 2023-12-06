@@ -5,16 +5,15 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "users")
-public class User {
+@Table(name = "emailVerification")
+public class EmailVerificationDetails {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String name;
-	private String address;
 	private String email;
-	private String phoneNumber;
-	@ManyToOne
- private Organisation organisation;
+	private Integer total_attempts;
+	private  String code;
+	@OneToOne
+ private User user;
 }

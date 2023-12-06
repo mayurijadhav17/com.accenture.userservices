@@ -1,10 +1,15 @@
 package com.accenture.userservice.service;
 
 import com.accenture.userservice.exception.ResourceNotFoundException;
+import com.accenture.userservice.model.EmailVerificationDetails;
+import com.accenture.userservice.model.Organisation;
 import com.accenture.userservice.model.User;
+import com.accenture.userservice.repo.EmailVerificationDetailsRepository;
 import com.accenture.userservice.repo.OrganisationRepository;
 import com.accenture.userservice.repo.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,28 +18,41 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+
 public class UserService {
 private UserRepository userRepository;
 private OrganisationRepository organisationRepository;
-private String authToken;
+private EmailVerificationDetailsRepository emailVerificationDetailsRepository;
 private static final int MAX_ATTEMPTS = 3;
-private  int Total_Attemps = 0;
 
 @Autowired
-public UserService(UserRepository userRepository, OrganisationRepository organisationRepository) {
+public UserService(UserRepository userRepository, OrganisationRepository organisationRepository, EmailVerificationDetailsRepository emailVerificationDetailsRepository) {
 	this.userRepository = userRepository;
 	this.organisationRepository = organisationRepository;
+	this.emailVerificationDetailsRepository = emailVerificationDetailsRepository;
 }
 
+@Transactional
 public User createUser(User user) throws Exception {
+	String domain = getDomainNameFromEmail(user.getEmail());
+	log.info("email Domain--->" + domain);
 	if (userRepository.existsUserByEmail(user.getEmail())) {
 		throw new Exception("User with " + user.getEmail() + " is already exist");
-	} else if (!organisationRepository.existsById(user.getOrgnisation_id())) {
-		throw new Exception("Organisation id invalid!!");
-	} else {
-		log.info("user created");
-		return userRepository.save(user);
 	}
+	if (organisationRepository.findByDomain(domain) == null) {
+		throw new Exception("Email domain is invalid!!");
+	}
+	user = userRepository.save(user);
+	log.info("user Saved !!");
+	updateEmailVerificationDetails(user);
+	update_User_Orgnisation_FK(user, domain);
+	return user;
+}
+
+private User update_User_Orgnisation_FK(User user, String domain)	{
+	Organisation organisation = organisationRepository.findByDomain(domain);
+	user.setOrganisation(organisation);
+	return updateUserDetails(user, user.getId());
 }
 
 public User getUserById(Long id) {
@@ -57,28 +75,46 @@ public User updateUserDetails(User userRes, Long id) {
 		user.setName(userRes.getName());
 		user.setAddress(userRes.getAddress());
 		user.setEmail(userRes.getEmail());
-		user.setPhonenumber(userRes.getPhonenumber());
+		user.setPhoneNumber(userRes.getPhoneNumber());
 		return userRepository.save(user);
 	}).orElseThrow(() -> new ResourceNotFoundException("User Not Found For for ID :: " + id));
 }
 
-public String getEmailCode() {
-	authToken = UUID.randomUUID().toString();
-	log.info("Code-------------->" + authToken);
-	return "Code is generated";
+private void updateEmailVerificationDetails(User user) throws Exception {
+	String authCode = UUID.randomUUID().toString();
+	Integer totalAttempts = 0;
+	EmailVerificationDetails emailVerificationDetails = new EmailVerificationDetails();
+	emailVerificationDetails.setUser(user);
+	emailVerificationDetails.setEmail(user.getEmail());
+	emailVerificationDetails.setCode(authCode);
+	emailVerificationDetails.setTotal_attempts(0);
+	emailVerificationDetailsRepository.save(emailVerificationDetails);
+	log.info("Email confirmation Code-------------->" + authCode);
 }
 
-public String emailConfirmation(String email, String code) {
-	log.info("user email-->" + email);
-	log.info("tokens-->" + authToken + " &&  " + code);
-	String responseMsg = "";
-	log.info("total attempts --" + Total_Attemps + 1);
-	if (authToken.equals(code)) {
-		responseMsg = "Email is  confirmed !!";
-	} else {
-		//	userRepository.deleteByEmail(email);
-		responseMsg = "Email confirmation failed & user record deleted";
+private String getDomainNameFromEmail(String emailId) {
+	String domain = "";
+	domain = StringUtils.substringAfter(emailId, "@");
+	return domain;
+}
+
+public String emailConfirmation(String email, String Inputcode) throws Exception {
+	EmailVerificationDetails emailVerificationDetails = emailVerificationDetailsRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("email  details invalid = " + email));
+	Integer total_attempts = emailVerificationDetails.getTotal_attempts();
+	String code = emailVerificationDetails.getCode();
+
+	// Saving total_attempts session to table
+	emailVerificationDetails.setTotal_attempts(total_attempts + 1);
+	emailVerificationDetailsRepository.save(emailVerificationDetails);
+
+	if (total_attempts +1>= MAX_ATTEMPTS) {
+		deleteUserById(emailVerificationDetails.getUser().getId());
+		log.info("user record deleted ");
+		throw new Exception("Email Verification 3 attempts Over ,User record deleted!!");
 	}
-	return responseMsg;
+	if (!code.equals(Inputcode)) {
+		throw new Exception("Verification code is not matching !!");
+	}
+	return "Email Id verified!!";
 }
 }

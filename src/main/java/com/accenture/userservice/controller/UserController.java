@@ -43,11 +43,8 @@ public void deleteUser(@PathVariable Long id) {
 }
 
 @PostMapping("/emailConfirmation/{email}/{code}")
-public String emailConfirmation(@PathVariable String email,@PathVariable String code) {
+public String emailConfirmation(@PathVariable String email,@PathVariable String code) throws Exception {
 return userService.emailConfirmation(email,code);
 }
-@GetMapping ("/getEmailCode")
-public String getEmailCode() {
-	return userService.getEmailCode();
-}
+
 }

@@ -1,25 +1,42 @@
--- -- liquibase formatted sql
---
--- -- changeset liquibase:1
---
--- CREATE TABLE organisation
--- (
---     id          Long PRIMARY KEY,
---     name        VARCHAR,
---     domain      VARCHAR
--- );
---
--- CREATE TABLE users
--- (
---     id          Long PRIMARY KEY,
---     name        VARCHAR,
---     address     VARCHAR,
---     email       VARCHAR,
---     phonenumber Varchar,
---     organisation_id Varchar
--- );
---
--- INSERT  INTO  organisation  (id,name ,domain)  VALUES  (1,'Accenture','accenture.com');
--- INSERT  INTO  organisation  (id,name ,domain)  VALUES  (2,'Infosys','infosys.com');
--- -- INSERT  INTO  users  (id,name ,address,email,phonenumber,organisation_id)  VALUES  (1,'dummy_user1','Netherlands','dummy_user1@accenture.com','+31-798247892','1');
--- -- INSERT  INTO  users  (id,name ,address,email,phonenumber,organisation_id)   VALUES  (2,'dummy_user2','India','dummy_user2@accenture.com','+91-4354347892','1');
+CREATE TABLE organisation
+(
+    id     Long  auto_increment PRIMARY KEY,
+    name   VARCHAR(100),
+    domain VARCHAR(100)
+);
+
+CREATE TABLE users
+(
+    id              Long   auto_increment PRIMARY KEY,
+    name            VARCHAR(100),
+    address         VARCHAR(100),
+    email           VARCHAR(100),
+    phoneNumber     Varchar(100),
+    organisation_id Long
+);
+
+ALTER TABLE users
+    ADD CONSTRAINT fk_organisation_user FOREIGN KEY (organisation_id) REFERENCES organisation (id);
+
+CREATE TABLE emailVerification
+(
+    id             Long  auto_increment PRIMARY KEY,
+    email          VARCHAR(100),
+    total_attempts INTEGER,
+    code           VARCHAR(100),
+    user_id        Long
+);
+
+ALTER TABLE emailVerification
+    ADD CONSTRAINT fk_user_emailVerification FOREIGN KEY (user_id) REFERENCES users (id);
+
+---Initial Data --
+INSERT INTO organisation( name, domain)
+values ('Accenture', 'accenture.com');
+
+INSERT INTO users(name, address, email, phoneNumber, organisation_id)
+values ('dummy_user', 'Amsterdam', 'dummy@accenture.com', '+31-32483249', 1);
+
+INSERT INTO users(name, address, email, phoneNumber, organisation_id)
+values ('dummy_user2', 'Berlin', 'user2@accenture.com', '+3242332483249', 1);
+
