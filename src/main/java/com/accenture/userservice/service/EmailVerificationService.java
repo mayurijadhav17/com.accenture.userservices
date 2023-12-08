@@ -71,10 +71,14 @@ public class EmailVerificationService {
     if(!token.equals(requestToken) && totalAttempts + 1 <= userRegistrationProperties.getMaxAttempts()) {
       emailVerificationDto.setResponseMessage("Email token is not matching !!");
     }
-    if(totalAttempts + 1 >= userRegistrationProperties.getMaxAttempts() || (currentDateTIme()).compareTo((emailVerification.getExpiryDate())) > 0) {
+    if(((currentDateTIme()).compareTo((emailVerification.getExpiryDate())) > 0) && totalAttempts + 1 <= userRegistrationProperties.getMaxAttempts()) {
+      emailVerificationDto.setResponseMessage("Email verification code expired");
+      
+    }
+    if(totalAttempts + 1 >= userRegistrationProperties.getMaxAttempts()) {
       //deleting user
       userRepository.deleteById(userId);
-      emailVerificationDto.setResponseMessage("Email verification code expired or attempts over 3 for you !! User record deleted");
+      emailVerificationDto.setResponseMessage("total attempts over 3 for you !! User record deleted");
     }
     
     return emailVerificationDto;
