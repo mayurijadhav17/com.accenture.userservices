@@ -18,3 +18,7 @@ spring:
 
   profiles:
     active: dev
+
+
+#  MAX_ATTEMPTS : 3
+#  EXPIRATION : 60 * 24

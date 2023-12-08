@@ -20,7 +20,7 @@ public OrganisationController(OrganisationService organisationService) {
 	this.organisationService = organisationService;
 }
 @PostMapping
-public Organisation addOrganisation(@RequestBody Organisation organisation) {
+public Organisation addOrganisation(@RequestBody Organisation organisation) throws Exception {
 	return organisationService.create(organisation);
 }
 

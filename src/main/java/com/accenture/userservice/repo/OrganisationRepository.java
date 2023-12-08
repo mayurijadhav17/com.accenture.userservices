@@ -7,8 +7,12 @@ import java.util.Optional;
 
 public interface OrganisationRepository extends JpaRepository<Organisation, Long> {
 Optional<Organisation> findById(Long id);
+
 boolean existsById(Long id);
 
-Organisation findByDomain(String domain);
+Optional<Organisation> findByDomain(String domain);
+
+boolean existsByDomain(String domain);
+
 void deleteById(Long id);
 }

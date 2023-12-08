@@ -42,9 +42,9 @@ public void deleteUser(@PathVariable Long id) {
 	userService.deleteUserById(id);
 }
 
-@PostMapping("/emailConfirmation/{email}/{code}")
-public String emailConfirmation(@PathVariable String email,@PathVariable String code) throws Exception {
-return userService.emailConfirmation(email,code);
+@PostMapping("/emailVerification/{email}/{token}")
+public String emailVerificationToken(@PathVariable String email, @PathVariable String token) throws Exception {
+	return userService.emailVerificationToken(email, token);
 }
 
 }
