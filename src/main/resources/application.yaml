@@ -1,6 +1,6 @@
 user-registration:
   max-attempts: 3
-  expiration:  1
+  expiration:  1440
 spring:
   datasource:
     url: jdbc:h2:mem:testdb
