@@ -14,9 +14,9 @@ public class Organisation {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-  @NotEmpty
+  @NotEmpty(message = "Please enter organisation name")
   private String name;
-  @NotEmpty
+  @NotEmpty(message = "Please enter organisation domain name")
   private String domain;
   @JsonIgnore
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

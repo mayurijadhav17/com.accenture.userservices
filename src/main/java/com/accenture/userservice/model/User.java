@@ -13,9 +13,9 @@ public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-  @NotEmpty
+  @NotEmpty(message = "Please enter user name")
   private String name;
-  @Email
+  @Email (message = "Please enter valid emailId ")
   private String email;
   
   @Enumerated(EnumType.ORDINAL)
