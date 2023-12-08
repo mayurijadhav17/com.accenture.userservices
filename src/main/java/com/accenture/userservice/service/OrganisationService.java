@@ -14,7 +14,7 @@ private final OrganisationRepository organisationRepository;
 
 public Organisation create(Organisation organisation) throws Exception {
 	if(organisationRepository.existsByDomain(organisation.getDomain())) {
-		throw new Exception("Organisation with domain is already existe!! " + organisation.getDomain());
+		throw new Exception("Organisation with domain is already exist!! " + organisation.getDomain());
 	}
 	return organisationRepository.save(organisation);
 }

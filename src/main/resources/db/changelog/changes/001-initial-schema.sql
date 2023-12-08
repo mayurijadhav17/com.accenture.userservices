@@ -10,6 +10,7 @@ CREATE TABLE user_details
     id              Long auto_increment PRIMARY KEY,
     name            VARCHAR(100),
     email           VARCHAR(100),
+    status           VARCHAR(100),
     organisation_id Long
 );
 
@@ -29,9 +30,9 @@ CREATE TABLE email_verification
 INSERT INTO organisation(name, domain)
 values ('Accenture', 'accenture.com');
 
-INSERT INTO user_details(name, email, organisation_id)
-values ('Mayuri', 'mayuri@accenture.com', 1);
-
-INSERT INTO user_details(name, email, organisation_id)
-values ('dummy_user2', 'user2@accenture.com', 1);
+-- INSERT INTO user_details(name, email,status, organisation_id)
+-- values ('Mayuri', 'mayuri@accenture.com','active' 1);
+--
+-- INSERT INTO user_details(name, email, status,organisation_id)
+-- values ('dummy_user2', 'user2@accenture.com','inactive' 1);
 

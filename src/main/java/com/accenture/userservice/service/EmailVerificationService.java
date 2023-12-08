@@ -1,5 +1,6 @@
 package com.accenture.userservice.service;
 
+import com.accenture.userservice.configuration.GlobalProperties;
 import com.accenture.userservice.exception.ResourceNotFoundException;
 import com.accenture.userservice.model.EmailVerification;
 import com.accenture.userservice.model.User;
@@ -21,7 +22,7 @@ public class EmailVerificationService {
 
 private final EmailVerificationRepository emailVerificationRepository;
 private final UserRepository userRepository;
-
+private final GlobalProperties globalProperties;
 private static final int MAX_ATTEMPTS = 3;
 private static final int EXPIRATION = 60 * 24;
 
@@ -51,6 +52,7 @@ public void saveEmailVerification(User user) throws Exception {
 }
 
 public String checkEmailVerification(Long userId, String requestToken) throws Exception {
+	User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not found !"));
 	EmailVerification emailVerification = emailVerificationRepository.findByUserId(userId).orElseThrow(() -> new ResourceNotFoundException("User Not found !"));
 	Integer totalAttempts = emailVerification.getTotalAttempts();
 	String token = emailVerification.getToken();
@@ -70,6 +72,8 @@ public String checkEmailVerification(Long userId, String requestToken) throws Ex
 	if(!token.equals(requestToken)) {
 		throw new Exception("Verification code is not matching !!");
 	}
+	user.setStatus("active");
+	userRepository.save(user);
 	return "Email successfully verified!!";
 }
 }

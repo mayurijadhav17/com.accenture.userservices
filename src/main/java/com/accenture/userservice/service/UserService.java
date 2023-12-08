@@ -32,6 +32,7 @@ public User createUser(User user) throws Exception {
 		throw new Exception("Email domain is invalid!!");
 	}
 	user.setOrganisation(organisationRepository.findByDomain(domain).orElseThrow(() -> new ResourceNotFoundException("Organisation not found !")));
+	user.setStatus("inactive");
 	//saving email verification data
 	userRepository.save(user);
 	emailVerificationService.saveEmailVerification(user);
