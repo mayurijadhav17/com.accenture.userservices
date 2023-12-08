@@ -9,13 +9,14 @@ import java.util.Date;
 @Data
 @Table(name = "email_verification")
 public class EmailVerification {
-
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private Long id;
-private Integer totalAttempts;
-private String token;
-private Date expiryDate;
-private Long userId;
-
+  
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+  @Column(name = "TOTAL_ATTEMPTS")
+  private Integer totalAttempts;
+  private Long token;
+  @Column(name = "EXPIRY_Date")
+  private Date expiryDate;
+  private Long userId;
 }

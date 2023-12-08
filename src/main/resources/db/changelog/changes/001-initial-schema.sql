@@ -10,7 +10,7 @@ CREATE TABLE user_details
     id              Long auto_increment PRIMARY KEY,
     name            VARCHAR(100),
     email           VARCHAR(100),
-    status           VARCHAR(100),
+    status          VARCHAR(100),
     organisation_id Long
 );
 
@@ -19,11 +19,11 @@ ALTER TABLE user_details
 
 CREATE TABLE email_verification
 (
-    id            Long auto_increment PRIMARY KEY,
-    totalAttempts INTEGER,
-    token         VARCHAR(100),
-    expiryDate    DATE,
-    user_id       Long
+    id             Long auto_increment PRIMARY KEY,
+    total_Attempts INTEGER,
+    token          VARCHAR(100),
+    expiry_Date    DATE,
+    user_id        Long
 );
 
 ---Initial Data --
