@@ -6,14 +6,18 @@ import com.accenture.userservice.model.Organisation;
 import com.accenture.userservice.repo.OrganisationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Collections;
 import java.util.List;
 
 @RequiredArgsConstructor
 @Service
 public class OrganisationService {
   private final OrganisationRepository organisationRepository;
-  
+ 
+  private final RestTemplate restTemplate;
   public Organisation create(Organisation organisation) throws Exception {
     if(organisationRepository.existsByDomain(organisation.getDomain())) {
       throw new OrganisationDomainAlreadyExistException("Organisation with domain is already exist--> " + organisation.getDomain());
@@ -27,7 +31,11 @@ public class OrganisationService {
   }
   
   public List<Organisation> getAllOrganisations() {
-    return organisationRepository.findAll();
+    UriComponentsBuilder uriBuilder = UriComponentsBuilder
+            .fromUriString("http://localhost:8080/api/organisation")
+            .queryParam("limit", String.valueOf(10));
+    return Collections.singletonList(restTemplate.getForObject(uriBuilder.toUriString(), Organisation.class));
+    //return organisationRepository.findAll();
   }
   
   public void deleteById(Long id) {
