@@ -21,18 +21,18 @@ public class CustomExceptionHandler {
   }
   
   @ExceptionHandler(EMailAlreadyExistException.class)
-  @ResponseStatus(value = HttpStatus.NOT_FOUND)
+  @ResponseStatus(value = HttpStatus.CONFLICT)
   public @ResponseBody ErrorDto handleResourceNotFound(final EMailAlreadyExistException exception) {
     errorDto.setErrorMessage(exception.getMessage());
-    errorDto.setErrorCode(HttpStatus.FOUND.value());
+    errorDto.setErrorCode(HttpStatus.CONFLICT.value()); //409 error code for conflict
     return errorDto;
   }
   
   @ExceptionHandler(OrganisationDomainAlreadyExistException.class)
-  @ResponseStatus(value = HttpStatus.NOT_FOUND)
-  public @ResponseBody ErrorDto handleResourceNotFound(final OrganisationDomainAlreadyExistException exception) {
+  @ResponseStatus(value = HttpStatus.CONFLICT)
+   public @ResponseBody ErrorDto handleResourceNotFound(final OrganisationDomainAlreadyExistException exception) {
     errorDto.setErrorMessage(exception.getMessage());
-    errorDto.setErrorCode(HttpStatus.FOUND.value());
+    errorDto.setErrorCode(HttpStatus.CONFLICT.value());
     return errorDto;
   }
 }
