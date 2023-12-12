@@ -33,5 +33,10 @@ public class OrganisationController {
   public void deleteOrganisation(@PathVariable Long id) {
     organisationService.deleteById(id);
   }
+  
+  @PutMapping("{id}")
+  public Organisation updateOrganisation(@RequestBody Organisation organisation, @PathVariable Long id) throws Exception {
+    return organisationService.updateOrganisationDetails(organisation, id);
+  }
 }
 

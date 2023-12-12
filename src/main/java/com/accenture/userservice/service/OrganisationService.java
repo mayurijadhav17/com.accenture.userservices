@@ -36,5 +36,14 @@ public class OrganisationService {
     }
     organisationRepository.deleteById(id);
   }
-  
+  public Organisation updateOrganisationDetails(Organisation organisationRequest, Long id) throws Exception {
+    Organisation organisation = organisationRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Organisation not found for id--> " + id));
+    if(organisationRepository.existsByDomain(organisationRequest.getDomain())) {
+      throw new OrganisationDomainAlreadyExistException("Organisation Domain is already exist--> "+ organisationRequest.getDomain() );
+    }
+    organisation.setName(organisationRequest.getName());
+    organisation.setDomain(organisationRequest.getDomain());
+    return organisationRepository.save(organisation);
+  }
 }
