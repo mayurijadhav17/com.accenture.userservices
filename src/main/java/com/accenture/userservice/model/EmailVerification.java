@@ -3,7 +3,7 @@ package com.accenture.userservice.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -17,6 +17,7 @@ public class EmailVerification {
   private Integer totalAttempts;
   private Long token;
   @Column(name = "EXPIRY_Date")
-  private Date expiryDate;
-  private Long userId;
+  private LocalDateTime expiryDate;
+  @OneToOne
+  private User user;
 }

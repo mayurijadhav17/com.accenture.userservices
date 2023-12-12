@@ -12,11 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Random;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -27,35 +24,30 @@ public class EmailVerificationService {
   private final UserRepository userRepository;
   private final UserRegistrationProperties userRegistrationProperties;
   
-  private Date calculateExpiryDate(int expiryTimeInMinutes) {
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(new Timestamp(cal.getTime().getTime()));
-    cal.add(Calendar.MINUTE, expiryTimeInMinutes);
-    return new Date(cal.getTime().getTime());
+  //calculate expiry date time
+  private LocalDateTime calculateExpiryDate(int expiryTimeInMinutes) {
+    return currentDateTIme().plusMinutes(userRegistrationProperties.getExpiration());
   }
   
-  private Date currentDateTIme() {
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(new Timestamp(cal.getTime().getTime()));
-    return new Date(cal.getTime().getTime());
+  // get the current date time
+  private LocalDateTime currentDateTIme() {
+    return LocalDateTime.now();
   }
   
   public void saveEmailVerification(User user) throws Exception {
     // 6 digit token generation
-    String authCode = UUID.randomUUID().toString();
-    Long token = Long.valueOf(new Random().nextInt(1000000));
+    Long token = Long.valueOf(new Random().nextInt(100000, 999999));
     EmailVerification emailVerification = new EmailVerification();
-    emailVerification.setUserId(user.getId());
+    emailVerification.setUser(user);
     emailVerification.setToken(token);
     emailVerification.setExpiryDate(calculateExpiryDate(userRegistrationProperties.getExpiration()));
     emailVerification.setTotalAttempts(0);
     emailVerificationRepository.save(emailVerification);
-    log.info("Email confirmation Code-------------->" + authCode);
   }
   
   public EmailVerificationDto checkEmailVerification(Long userId, Long requestToken) {
     User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not found !"));
-    EmailVerification emailVerification = emailVerificationRepository.findByUserId(userId).orElseThrow(() -> new ResourceNotFoundException("User Not found !"));
+    EmailVerification emailVerification = emailVerificationRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not found !"));
     Integer totalAttempts = emailVerification.getTotalAttempts();
     Long token = emailVerification.getToken();
     EmailVerificationDto emailVerificationDto = new EmailVerificationDto();
@@ -63,24 +55,23 @@ public class EmailVerificationService {
     emailVerification.setTotalAttempts(totalAttempts + 1);
     emailVerificationRepository.save(emailVerification);
     
-    if(totalAttempts + 1 <= userRegistrationProperties.getMaxAttempts() && token.equals(requestToken) && (currentDateTIme()).compareTo((emailVerification.getExpiryDate())) < 0) {
-      user.setStatus(Status.ACTIVE);
-      userRepository.save(user);
-      emailVerificationDto.setResponseMessage("Email verified !!");
-    }
-    if(!token.equals(requestToken) && totalAttempts + 1 <= userRegistrationProperties.getMaxAttempts()) {
-      emailVerificationDto.setResponseMessage("Email token is not matching !!");
-    }
-    if(((currentDateTIme()).compareTo((emailVerification.getExpiryDate())) > 0) && totalAttempts + 1 <= userRegistrationProperties.getMaxAttempts()) {
-      emailVerificationDto.setResponseMessage("Email verification code expired");
-      
-    }
-    if(totalAttempts + 1 >= userRegistrationProperties.getMaxAttempts()) {
+    if(totalAttempts + 1 <= userRegistrationProperties.getMaxAttempts()) {
+      if(token.equals(requestToken) && (currentDateTIme()).compareTo((emailVerification.getExpiryDate())) < 0) {
+        user.setStatus(Status.ACTIVE);
+        userRepository.save(user);
+        emailVerificationDto.setResponseMessage("Email verified !!");
+      }
+      if(!token.equals(requestToken)) {
+        emailVerificationDto.setResponseMessage("Email token is not matching !!");
+      }
+      if(((currentDateTIme()).compareTo((emailVerification.getExpiryDate())) > 0)) {
+        emailVerificationDto.setResponseMessage("Email verification code expired");
+      }
+    } else {
       //deleting user
       userRepository.deleteById(userId);
       emailVerificationDto.setResponseMessage("total attempts over 3 for you !! User record deleted");
     }
-    
     return emailVerificationDto;
   }
 }

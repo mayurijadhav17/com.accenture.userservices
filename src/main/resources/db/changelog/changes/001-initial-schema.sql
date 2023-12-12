@@ -25,6 +25,8 @@ CREATE TABLE email_verification
     expiry_Date    DATE,
     user_id        Long
 );
+ALTER TABLE email_verification
+    ADD CONSTRAINT fk_email_user FOREIGN KEY (user_id) REFERENCES user_details(id) ON DELETE CASCADE;
 
 ---Initial Data --
 INSERT INTO organisation(name, domain)

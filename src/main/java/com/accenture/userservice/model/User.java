@@ -15,10 +15,9 @@ public class User {
   private Long id;
   @NotEmpty(message = "Please enter user name")
   private String name;
-  @Email (message = "Please enter valid emailId ")
+  @Email(message = "Please enter valid emailId ")
   private String email;
-  
-  @Enumerated(EnumType.ORDINAL)
+  @Enumerated(EnumType.STRING)
   private Status status;
   
   @ManyToOne

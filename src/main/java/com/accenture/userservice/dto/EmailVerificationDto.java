@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class EmailVerificationDto {
   String responseMessage;
- // String errorCode;
+ 
 }
