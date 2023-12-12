@@ -46,7 +46,8 @@ public class EmailVerificationService {
   }
   
   public EmailVerificationDto checkEmailVerification(Long userId, Long requestToken) {
-    User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not found !"));
+    User user = userRepository.findById(userId).
+            orElseThrow(() -> new ResourceNotFoundException("User Not found for id--> "+userId));
     EmailVerification emailVerification = emailVerificationRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not found !"));
     Integer totalAttempts = emailVerification.getTotalAttempts();
     Long token = emailVerification.getToken();

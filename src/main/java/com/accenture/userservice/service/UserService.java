@@ -1,6 +1,7 @@
 package com.accenture.userservice.service;
 
 import com.accenture.userservice.dto.EmailVerificationDto;
+import com.accenture.userservice.exception.EMailAlreadyExistException;
 import com.accenture.userservice.exception.ResourceNotFoundException;
 import com.accenture.userservice.model.Organisation;
 import com.accenture.userservice.model.Status;
@@ -28,7 +29,7 @@ public class UserService {
   public User createUser(User user) throws Exception {
     
     if(userRepository.existsUserByEmail(user.getEmail())) {
-      throw new Exception("User with " + user.getEmail() + " is already exist");
+      throw new EMailAlreadyExistException("User with email is already exist-->"+ user.getEmail());
     }
     user.setStatus(Status.INACTIVE);
     user.setOrganisation(checkOrganisationDetails(user.getEmail()));
@@ -39,7 +40,8 @@ public class UserService {
   }
   
   public User getUserById(Long id) {
-    return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User Not found with id = " + id));
+    return userRepository.findById(id).
+            orElseThrow(() -> new ResourceNotFoundException("User Not found with id --> " + id));
   }
   
   public List<User> getUsers() {
@@ -48,16 +50,16 @@ public class UserService {
   
   public void deleteUserById(Long id) {
     if(!userRepository.existsById(id)) {
-      throw new ResourceNotFoundException("User Not Found for id " + id);
+      throw new ResourceNotFoundException("User Not Found for id -->" + id);
     }
     userRepository.deleteById(id);
   }
   
   public User updateUserDetails(User userRes, Long id) throws Exception {
     User user = userRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("user not found for id!!" + id));
+            .orElseThrow(() -> new ResourceNotFoundException("user not found for id--> " + id));
     if(userRepository.existsUserByEmail(userRes.getEmail())) {
-      throw new Exception("User with " + user.getEmail() + " is already exist");
+      throw new EMailAlreadyExistException("User with email is already exist--> "+ user.getEmail() );
     }
     user.setName(userRes.getName());
     user.setEmail(user.getEmail());
@@ -69,10 +71,10 @@ public class UserService {
     //get domain name from email id
     String domain = StringUtils.substringAfter(email, "@");
     if(!organisationRepository.existsByDomain(domain)) {
-      throw new Exception("Email domain is invalid!!");
+      throw new Exception("Email domain is invalid--->" + email);
     }
     Organisation organisation = organisationRepository.findByDomain(domain)
-            .orElseThrow(() -> new ResourceNotFoundException("Organisation not found !"));
+            .orElseThrow(() -> new ResourceNotFoundException("Organisation not found for domain-->" + domain));
     return organisation;
   }
   
