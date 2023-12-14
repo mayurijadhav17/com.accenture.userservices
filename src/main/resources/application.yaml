@@ -1,6 +1,10 @@
 user-registration:
   max-attempts: 3
-  expiration:  1440
+  expiration: 1440
+
+external-api:
+  url: https://jsonplaceholder.typicode.com/posts/
+
 spring:
   datasource:
     url: jdbc:h2:mem:testdb

@@ -1,13 +1,16 @@
 package com.accenture.userservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @Table(name = "user_details")
+@NoArgsConstructor
 public class User {
   
   @Id
@@ -19,7 +22,8 @@ public class User {
   private String email;
   @Enumerated(EnumType.STRING)
   private Status status;
-  
+  @JsonIgnore
   @ManyToOne
   private Organisation organisation;
+  
 }
