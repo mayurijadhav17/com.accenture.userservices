@@ -10,7 +10,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
- 
+  
   @Bean
   public InMemoryUserDetailsManager userDetailsService() {
     UserDetails admin = User.withDefaultPasswordEncoder()
@@ -23,13 +23,13 @@ public class SecurityConfig {
             .password("password")
             .roles("USER")
             .build();
-    return new InMemoryUserDetailsManager(admin,user);
+    return new InMemoryUserDetailsManager(admin, user);
   }
   
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
     httpSecurity.authorizeRequests(authorizeRequests -> authorizeRequests.requestMatchers("/api/user/**",
-                    "/api/organisation/**","/h2/console/**","/api/external.api/**")
+                    "/api/organisation/**", "/h2/console/**", "/api/external.api/**")
             .permitAll()).csrf((csrf) -> csrf.disable());
     httpSecurity.headers(headers -> headers.frameOptions().disable());
     return httpSecurity.build();
