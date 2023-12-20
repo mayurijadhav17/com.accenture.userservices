@@ -4,8 +4,8 @@ import com.accenture.userservice.configuration.UserRegistrationProperties;
 import com.accenture.userservice.dto.EmailVerificationDto;
 import com.accenture.userservice.exception.ResourceNotFoundException;
 import com.accenture.userservice.model.EmailVerification;
-import com.accenture.userservice.model.Status;
 import com.accenture.userservice.model.User;
+import com.accenture.userservice.model.UserStatusEnum;
 import com.accenture.userservice.repo.EmailVerificationRepository;
 import com.accenture.userservice.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,9 +34,9 @@ public class EmailVerificationService {
     return LocalDateTime.now();
   }
   
-  public void saveEmailVerification(User user) throws Exception {
+  public void sendEmailVerificationCode(User user) throws Exception {
     // 6 digit token generation
-    Long token = Long.valueOf(new Random().nextInt(100000, 999999));
+    int token = new Random().nextInt(100000, 999999);
     EmailVerification emailVerification = new EmailVerification();
     emailVerification.setUser(user);
     emailVerification.setToken(token);
@@ -45,28 +45,30 @@ public class EmailVerificationService {
     emailVerificationRepository.save(emailVerification);
   }
   
-  public EmailVerificationDto checkEmailVerification(Long userId, Long requestToken) {
+  public EmailVerificationDto checkEmailVerification(Long userId, int requestToken) {
     User user = userRepository.findById(userId).
             orElseThrow(() -> new ResourceNotFoundException("User Not found for id--> "+userId));
     EmailVerification emailVerification = emailVerificationRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not found !"));
-    Integer totalAttempts = emailVerification.getTotalAttempts();
-    Long token = emailVerification.getToken();
+    int totalAttempts = emailVerification.getTotalAttempts();
+    int token = emailVerification.getToken();
     EmailVerificationDto emailVerificationDto = new EmailVerificationDto();
     // Saving total_attempts session to table
     emailVerification.setTotalAttempts(totalAttempts + 1);
     emailVerificationRepository.save(emailVerification);
     
     if(totalAttempts + 1 <= userRegistrationProperties.getMaxAttempts()) {
-      if(token.equals(requestToken) && (currentDateTIme()).compareTo((emailVerification.getExpiryDate())) < 0) {
-        user.setStatus(Status.ACTIVE);
-        userRepository.save(user);
-        emailVerificationDto.setResponseMessage("Email verified !!");
-      }
-      if(!token.equals(requestToken)) {
-        emailVerificationDto.setResponseMessage("Email token is not matching !!");
-      }
       if(((currentDateTIme()).compareTo((emailVerification.getExpiryDate())) > 0)) {
         emailVerificationDto.setResponseMessage("Email verification code expired");
+      }
+      else{
+        if(token==requestToken ) {
+          user.setStatus(UserStatusEnum.ACTIVE);
+          userRepository.save(user);
+          emailVerificationDto.setResponseMessage("Email verified !!");
+        }
+        else{
+          emailVerificationDto.setResponseMessage("Email token is not matching !!");
+        }
       }
     } else {
       //deleting user

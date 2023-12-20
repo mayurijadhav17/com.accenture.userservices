@@ -1,14 +1,14 @@
 package com.accenture.userservice.feignClient;
 
-import com.accenture.userservice.model.Email;
+import com.accenture.userservice.model.SendEmailRequest;
 
 public class EmailClientImpl implements EmailClient{
   
   @Override
-  public Email sendEmail(int token) {
-    Email email = new Email();
+  public SendEmailRequest sendEmail() {
+    SendEmailRequest email = new SendEmailRequest();
     email.setSubject("Email Verification");
-    email.setText("Token :"+ token);
-    return email;
+   return email;
   }
+
 }

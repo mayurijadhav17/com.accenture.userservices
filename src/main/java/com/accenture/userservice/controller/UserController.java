@@ -41,7 +41,7 @@ public class UserController {
   }
   
   @PostMapping("/emailVerification/{email}/{token}")
-  public EmailVerificationDto emailVerificationToken(@PathVariable String email, @PathVariable Long token) throws Exception {
+  public EmailVerificationDto emailVerificationToken(@PathVariable String email, @PathVariable Integer token) throws Exception {
     return userService.emailVerificationToken(email, token);
   }
   

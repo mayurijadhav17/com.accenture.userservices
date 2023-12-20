@@ -21,7 +21,7 @@ public class User {
   @Email(message = "Please enter valid emailId ")
   private String email;
   @Enumerated(EnumType.STRING)
-  private Status status;
+  private UserStatusEnum status;
   @JsonIgnore
   @ManyToOne
   private Organisation organisation;

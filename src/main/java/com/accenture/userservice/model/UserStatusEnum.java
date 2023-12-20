@@ -1,5 +1,5 @@
 package com.accenture.userservice.model;
 
-public enum Status {
+public enum UserStatusEnum {
   ACTIVE, INACTIVE;
 }

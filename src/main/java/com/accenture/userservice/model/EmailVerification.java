@@ -14,8 +14,8 @@ public class EmailVerification {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   @Column(name = "TOTAL_ATTEMPTS")
-  private Integer totalAttempts;
-  private Long token;
+  private int totalAttempts;
+  private int token;
   @Column(name = "EXPIRY_Date")
   private LocalDateTime expiryDate;
   @OneToOne

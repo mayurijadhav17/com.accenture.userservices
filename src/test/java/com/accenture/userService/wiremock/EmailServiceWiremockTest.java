@@ -14,7 +14,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 @Slf4j
 
 public class EmailServiceWiremockTest {
- 
+  
   @Mock
   EmailClientImpl emailClient;
   WireMockServer wireMockServer;
@@ -24,12 +24,11 @@ public class EmailServiceWiremockTest {
     wireMockServer = new WireMockServer(options().port(8888));
     wireMockServer.start();
   }
-
- 
+  
   @AfterEach
   void tearDown() {
   }
-
+  
   @Test
   void sendEmailTest() {
     wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api/email-service"))
@@ -38,10 +37,10 @@ public class EmailServiceWiremockTest {
     log.error("Server Start");
     log.error(wireMockServer.toString());
     log.error(wireMockServer.getStubMappings().toString());
- emailClient = new EmailClientImpl();
-    emailClient.sendEmail(654321); // This function is tested
-
+    emailClient = new EmailClientImpl();
+    emailClient.sendEmail(); // This function is tested
+    
     //assertEquals("123456", "654321");
   }
-
+  
 }

@@ -20,8 +20,8 @@ ALTER TABLE user_details
 CREATE TABLE email_verification
 (
     id             Long auto_increment PRIMARY KEY,
-    total_Attempts INTEGER,
-    token          VARCHAR(100),
+    total_Attempts int,
+    token          int,
     expiry_Date    DATE,
     user_id        Long
 );

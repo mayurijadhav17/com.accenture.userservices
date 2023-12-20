@@ -9,12 +9,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
 public class CustomExceptionHandler {
-  
-  ErrorDto errorDto = new ErrorDto();
+  ErrorDto errorDto;
+
   
   @ExceptionHandler(ResourceNotFoundException.class)
   @ResponseStatus(value = HttpStatus.NOT_FOUND)
   public @ResponseBody ErrorDto handleResourceNotFound(final ResourceNotFoundException exception) {
+    errorDto = new ErrorDto();
     errorDto.setErrorMessage(exception.getMessage());
     errorDto.setErrorCode(HttpStatus.NOT_FOUND.value());
     return errorDto;
@@ -23,6 +24,7 @@ public class CustomExceptionHandler {
   @ExceptionHandler(EMailAlreadyExistException.class)
   @ResponseStatus(value = HttpStatus.CONFLICT)
   public @ResponseBody ErrorDto handleResourceNotFound(final EMailAlreadyExistException exception) {
+    errorDto = new ErrorDto();
     errorDto.setErrorMessage(exception.getMessage());
     errorDto.setErrorCode(HttpStatus.CONFLICT.value()); //409 error code for conflict
     return errorDto;
