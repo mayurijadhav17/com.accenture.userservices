@@ -50,13 +50,14 @@ public class EmailVerificationService {
     EmailVerification emailVerification = emailVerificationRepository
             .findById(userId).orElseThrow(() -> new UserNotFoundException("USER_NOT_FOUND"));
     int totalAttempts = emailVerification.getTotalAttempts();
+    int remainingAttempts=userRegistrationProperties.getMaxAttempts()-(emailVerification.getTotalAttempts()+1);
     int token = emailVerification.getToken();
     EmailVerificationDto emailVerificationDto = new EmailVerificationDto();
     // Saving total_attempts session to table
     emailVerification.setTotalAttempts(totalAttempts + 1);
     emailVerificationRepository.save(emailVerification);
     
-    if(totalAttempts + 1 <= userRegistrationProperties.getMaxAttempts()) {
+    if(totalAttempts + 1 < userRegistrationProperties.getMaxAttempts()) {
       if(((currentDateTIme()).compareTo((emailVerification.getExpiryDate())) > 0)) {
         emailVerificationDto.setResponseMessage("  ");
       } else {
@@ -65,13 +66,13 @@ public class EmailVerificationService {
           userRepository.save(user);
           emailVerificationDto.setResponseMessage("SUCCESS");
         } else {
-          emailVerificationDto.setResponseMessage("TOKEN_MISMATCH :"+totalAttempts);
+          emailVerificationDto.setResponseMessage("TOKEN_MISMATCH"+"&"+"ATTEMPTS_LEFT"+remainingAttempts);
         }
       }
     } else {
       //deleting user
       userRepository.deleteById(userId);
-      emailVerificationDto.setResponseMessage("TOTAL_ATTEMPTS_OVER :" + totalAttempts);
+      emailVerificationDto.setResponseMessage("TOTAL_ATTEMPTS_OVER");
     }
     return emailVerificationDto;
   }
