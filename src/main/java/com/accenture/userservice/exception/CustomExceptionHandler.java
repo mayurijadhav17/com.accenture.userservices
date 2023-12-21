@@ -10,31 +10,39 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class CustomExceptionHandler {
   ErrorDto errorDto;
-
   
-  @ExceptionHandler(ResourceNotFoundException.class)
+  @ExceptionHandler(UserNotFoundException.class)
   @ResponseStatus(value = HttpStatus.NOT_FOUND)
-  public @ResponseBody ErrorDto handleResourceNotFound(final ResourceNotFoundException exception) {
+  public @ResponseBody ErrorDto handleResourceNotFound(final UserNotFoundException exception) {
     errorDto = new ErrorDto();
     errorDto.setErrorMessage(exception.getMessage());
-    errorDto.setErrorCode(HttpStatus.NOT_FOUND.value());
+    errorDto.setErrorCode("USER_NOT_FOUND");
+    return errorDto;
+  }
+  
+  @ExceptionHandler(OrganisationNotFoundException.class)
+  @ResponseStatus(value = HttpStatus.NOT_FOUND)
+  public @ResponseBody ErrorDto handleOrganisationNotFound(final OrganisationNotFoundException exception) {
+    errorDto = new ErrorDto();
+    errorDto.setErrorMessage(exception.getMessage());
+    errorDto.setErrorCode("ORGANISATION_NOT_FOUND");
     return errorDto;
   }
   
   @ExceptionHandler(EMailAlreadyExistException.class)
   @ResponseStatus(value = HttpStatus.CONFLICT)
-  public @ResponseBody ErrorDto handleResourceNotFound(final EMailAlreadyExistException exception) {
+  public @ResponseBody ErrorDto handleEMailAlreadyExist(final EMailAlreadyExistException exception) {
     errorDto = new ErrorDto();
     errorDto.setErrorMessage(exception.getMessage());
-    errorDto.setErrorCode(HttpStatus.CONFLICT.value()); //409 error code for conflict
+    errorDto.setErrorCode("EMAIL_EXISTS");
     return errorDto;
   }
   
   @ExceptionHandler(OrganisationDomainAlreadyExistException.class)
   @ResponseStatus(value = HttpStatus.CONFLICT)
-   public @ResponseBody ErrorDto handleResourceNotFound(final OrganisationDomainAlreadyExistException exception) {
+   public @ResponseBody ErrorDto handleOrganisationDomainAlreadyExist(final OrganisationDomainAlreadyExistException exception) {
     errorDto.setErrorMessage(exception.getMessage());
-    errorDto.setErrorCode(HttpStatus.CONFLICT.value());
+    errorDto.setErrorCode("ORGANISATION_EXISTS");
     return errorDto;
   }
 }

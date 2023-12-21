@@ -1,7 +1,7 @@
 package com.accenture.userservice.service;
 
 import com.accenture.userservice.exception.OrganisationDomainAlreadyExistException;
-import com.accenture.userservice.exception.ResourceNotFoundException;
+import com.accenture.userservice.exception.OrganisationNotFoundException;
 import com.accenture.userservice.model.Organisation;
 import com.accenture.userservice.repo.OrganisationRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class OrganisationService {
   
   public Organisation getOrganisationById(Long id) {
     return organisationRepository.findById(id).
-            orElseThrow(() -> new ResourceNotFoundException("ORGANISATION_NOT_FOUND" + id));
+            orElseThrow(() -> new OrganisationNotFoundException("ORGANISATION_NOT_FOUND" + id));
   }
   
   public List<Organisation> getAllOrganisations() {
@@ -39,16 +39,16 @@ public class OrganisationService {
   
   public void deleteById(Long id) {
     if(!organisationRepository.existsById(id)) {
-      throw new ResourceNotFoundException("ORGANISATION_INVALID" + id);
+      throw new OrganisationNotFoundException("ORGANISATION_NOT_FOUND" + id);
     }
     organisationRepository.deleteById(id);
   }
   
   public Organisation updateOrganisationDetails(Organisation organisationRequest, Long id) throws Exception {
     Organisation organisation = organisationRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("ORGANISATION_NOT_FOUND " + id));
+            .orElseThrow(() -> new OrganisationNotFoundException("ORGANISATION_NOT_FOUND " + id));
     if(organisationRepository.existsByDomain(organisationRequest.getDomain())) {
-      throw new OrganisationDomainAlreadyExistException("ORGANISATION_EXISTS" + organisationRequest.getDomain());
+      throw new OrganisationDomainAlreadyExistException("ORGANISATION_ALREADY_EXISTS" + organisationRequest.getDomain());
     }
     organisation.setName(organisationRequest.getName());
     organisation.setDomain(organisationRequest.getDomain());

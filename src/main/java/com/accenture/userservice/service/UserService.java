@@ -2,7 +2,8 @@ package com.accenture.userservice.service;
 
 import com.accenture.userservice.dto.EmailVerificationDto;
 import com.accenture.userservice.exception.EMailAlreadyExistException;
-import com.accenture.userservice.exception.ResourceNotFoundException;
+import com.accenture.userservice.exception.OrganisationNotFoundException;
+import com.accenture.userservice.exception.UserNotFoundException;
 import com.accenture.userservice.model.Organisation;
 import com.accenture.userservice.model.UserStatusEnum;
 import com.accenture.userservice.model.User;
@@ -37,7 +38,7 @@ public class UserService {
       throw new Exception("EMAIL_INVALID" + domain);
     }
     Organisation organisation = organisationRepository.findByDomain(domain)
-            .orElseThrow(() -> new ResourceNotFoundException("ORGANISATION_NOT_FOUND" + domain));
+            .orElseThrow(() -> new OrganisationNotFoundException("ORGANISATION_NOT_FOUND" + domain));
     user.setOrganisation(organisation);
     //saving email verification data
     userRepository.save(user);
@@ -47,7 +48,7 @@ public class UserService {
   
   public User getUserById(Long id) {
     return userRepository.findById(id).
-            orElseThrow(() -> new ResourceNotFoundException("USER_NOT_FOUND" + id));
+            orElseThrow(() -> new UserNotFoundException("USER_NOT_FOUND" + id));
   }
   
   public List<User> getUsers() {
@@ -56,14 +57,14 @@ public class UserService {
   
   public void deleteUserById(Long id) {
     if(!userRepository.existsById(id)) {
-      throw new ResourceNotFoundException("USER_NOT_FOUND" + id);
+      throw new UserNotFoundException("USER_NOT_FOUND" + id);
     }
     userRepository.deleteById(id);
   }
   
   public User updateUserDetails(User userRes, Long id) throws Exception {
     User user = userRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("USER_NOT_FOUND" + id));
+            .orElseThrow(() -> new UserNotFoundException("USER_NOT_FOUND" + id));
     if(userRepository.existsUserByEmail(userRes.getEmail())) {
       throw new EMailAlreadyExistException("EMAIL_ALREADY_EXIST" + user.getEmail());
     }
@@ -74,13 +75,14 @@ public class UserService {
       throw new Exception("EMAIL_INVALID" + domain);
     }
     Organisation organisation = organisationRepository.findByDomain(domain)
-            .orElseThrow(() -> new ResourceNotFoundException("ORGANISATION_NOT_FOUND" + domain));
+            .orElseThrow(() -> new OrganisationNotFoundException("ORGANISATION_NOT_FOUND :" + domain));
     user.setOrganisation(organisation);
     return userRepository.save(user);
   }
   
   public EmailVerificationDto emailVerificationToken(String email, int requestToken) throws Exception {
-    User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("USER_NOT_FOUND"));;
+    User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("USER_NOT_FOUND"));
+    ;
     return emailVerificationService.checkEmailVerification(user.getId(), requestToken);
   }
   

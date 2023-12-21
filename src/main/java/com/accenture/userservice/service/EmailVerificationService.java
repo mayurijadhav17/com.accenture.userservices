@@ -2,7 +2,7 @@ package com.accenture.userservice.service;
 
 import com.accenture.userservice.configuration.UserRegistrationProperties;
 import com.accenture.userservice.dto.EmailVerificationDto;
-import com.accenture.userservice.exception.ResourceNotFoundException;
+import com.accenture.userservice.exception.UserNotFoundException;
 import com.accenture.userservice.model.EmailVerification;
 import com.accenture.userservice.model.User;
 import com.accenture.userservice.model.UserStatusEnum;
@@ -46,8 +46,9 @@ public class EmailVerificationService {
   }
   
   public EmailVerificationDto checkEmailVerification(Long userId, int requestToken) {
-    User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("USER_NOT_FOUND" + userId));
-    EmailVerification emailVerification = emailVerificationRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not found !"));
+    User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("USER_NOT_FOUND" + userId));
+    EmailVerification emailVerification = emailVerificationRepository
+            .findById(userId).orElseThrow(() -> new UserNotFoundException("USER_NOT_FOUND"));
     int totalAttempts = emailVerification.getTotalAttempts();
     int token = emailVerification.getToken();
     EmailVerificationDto emailVerificationDto = new EmailVerificationDto();
