@@ -18,14 +18,14 @@ public class OrganisationService {
   
   public Organisation create(Organisation organisation) throws Exception {
     if(organisationRepository.existsByDomain(organisation.getDomain())) {
-      throw new OrganisationDomainAlreadyExistException("Organisation with domain is already exist--> " + organisation.getDomain());
+      throw new OrganisationDomainAlreadyExistException("ORGANISATION_EXISTS" + organisation.getDomain());
     }
     return organisationRepository.save(organisation);
   }
   
   public Organisation getOrganisationById(Long id) {
     return organisationRepository.findById(id).
-            orElseThrow(() -> new ResourceNotFoundException("Organisation Not found with id -->" + id));
+            orElseThrow(() -> new ResourceNotFoundException("ORGANISATION_NOT_FOUND" + id));
   }
   
   public List<Organisation> getAllOrganisations() {
@@ -39,16 +39,16 @@ public class OrganisationService {
   
   public void deleteById(Long id) {
     if(!organisationRepository.existsById(id)) {
-      throw new ResourceNotFoundException("Organisation Not Found for id -->" + id);
+      throw new ResourceNotFoundException("ORGANISATION_INVALID" + id);
     }
     organisationRepository.deleteById(id);
   }
   
   public Organisation updateOrganisationDetails(Organisation organisationRequest, Long id) throws Exception {
     Organisation organisation = organisationRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Organisation not found for id--> " + id));
+            .orElseThrow(() -> new ResourceNotFoundException("ORGANISATION_NOT_FOUND " + id));
     if(organisationRepository.existsByDomain(organisationRequest.getDomain())) {
-      throw new OrganisationDomainAlreadyExistException("Organisation Domain is already exist--> " + organisationRequest.getDomain());
+      throw new OrganisationDomainAlreadyExistException("ORGANISATION_EXISTS" + organisationRequest.getDomain());
     }
     organisation.setName(organisationRequest.getName());
     organisation.setDomain(organisationRequest.getDomain());

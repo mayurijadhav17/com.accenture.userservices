@@ -46,8 +46,7 @@ public class EmailVerificationService {
   }
   
   public EmailVerificationDto checkEmailVerification(Long userId, int requestToken) {
-    User user = userRepository.findById(userId).
-            orElseThrow(() -> new ResourceNotFoundException("User Not found for id--> "+userId));
+    User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("USER_NOT_FOUND" + userId));
     EmailVerification emailVerification = emailVerificationRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not found !"));
     int totalAttempts = emailVerification.getTotalAttempts();
     int token = emailVerification.getToken();
@@ -58,22 +57,20 @@ public class EmailVerificationService {
     
     if(totalAttempts + 1 <= userRegistrationProperties.getMaxAttempts()) {
       if(((currentDateTIme()).compareTo((emailVerification.getExpiryDate())) > 0)) {
-        emailVerificationDto.setResponseMessage("Email verification code expired");
-      }
-      else{
-        if(token==requestToken ) {
+        emailVerificationDto.setResponseMessage("  ");
+      } else {
+        if(token == requestToken) {
           user.setStatus(UserStatusEnum.ACTIVE);
           userRepository.save(user);
-          emailVerificationDto.setResponseMessage("Email verified !!");
-        }
-        else{
-          emailVerificationDto.setResponseMessage("Email token is not matching !!");
+          emailVerificationDto.setResponseMessage("SUCCESS");
+        } else {
+          emailVerificationDto.setResponseMessage("TOKEN_MISMATCH :"+totalAttempts);
         }
       }
     } else {
       //deleting user
       userRepository.deleteById(userId);
-      emailVerificationDto.setResponseMessage("total attempts over 3 for you !! User record deleted");
+      emailVerificationDto.setResponseMessage("TOTAL_ATTEMPTS_OVER :" + totalAttempts);
     }
     return emailVerificationDto;
   }
