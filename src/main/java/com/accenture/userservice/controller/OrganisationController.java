@@ -2,6 +2,7 @@ package com.accenture.userservice.controller;
 
 import com.accenture.userservice.model.Organisation;
 import com.accenture.userservice.service.OrganisationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +16,7 @@ public class OrganisationController {
   private final OrganisationService organisationService;
   
   @PostMapping
-  public Organisation addOrganisation(@RequestBody Organisation organisation) throws Exception {
+  public Organisation addOrganisation(@RequestBody @Valid Organisation organisation) throws Exception {
     return organisationService.create(organisation);
   }
   
@@ -35,7 +36,7 @@ public class OrganisationController {
   }
   
   @PutMapping("{id}")
-  public Organisation updateOrganisation(@RequestBody Organisation organisation, @PathVariable Long id) throws Exception {
+  public Organisation updateOrganisation(@RequestBody @Valid Organisation organisation, @PathVariable Long id) throws Exception {
     return organisationService.updateOrganisationDetails(organisation, id);
   }
 }

@@ -31,7 +31,7 @@ public class UserController {
   }
   
   @PutMapping("{id}")
-  public User updateUser(@RequestBody User user, @PathVariable Long id) throws Exception {
+  public User updateUser(@RequestBody @Valid User user, @PathVariable Long id) throws Exception {
     return userService.updateUserDetails(user, id);
   }
   

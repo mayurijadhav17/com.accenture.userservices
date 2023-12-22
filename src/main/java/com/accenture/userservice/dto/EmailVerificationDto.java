@@ -1,9 +1,12 @@
 package com.accenture.userservice.dto;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Data;
 
 @Data
 public class EmailVerificationDto {
-  String responseMessage;
- 
+  @Enumerated(EnumType.STRING)
+  private Enum errorCode;
+  private int remainingAttempts;
 }
