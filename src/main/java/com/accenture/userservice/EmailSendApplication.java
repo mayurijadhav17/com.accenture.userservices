@@ -13,7 +13,7 @@ public class EmailSendApplication {
 
   public static void main(String args[])
   {
-    WireMockServer wireMockServer = new WireMockServer(options().port(8080));
+    WireMockServer wireMockServer = new WireMockServer(options().port(8081));
     wireMockServer.start();
     
     wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/email/send"))

@@ -11,6 +11,8 @@ CREATE TABLE user_details
     name            VARCHAR(100),
     email           VARCHAR(100),
     status          VARCHAR(100),
+    password        VARCHAR(100),
+    role            VARCHAR(100),
     organisation_id Long
 );
 
@@ -26,15 +28,12 @@ CREATE TABLE email_verification
     user_id        Long
 );
 ALTER TABLE email_verification
-    ADD CONSTRAINT fk_email_user FOREIGN KEY (user_id) REFERENCES user_details(id) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_email_user FOREIGN KEY (user_id) REFERENCES user_details (id) ON DELETE CASCADE;
 
 ---Initial Data --
 INSERT INTO organisation(name, domain)
 values ('Accenture', 'accenture.com');
 
--- INSERT INTO user_details(name, email,status, organisation_id)
--- values ('Mayuri', 'mayuri@accenture.com','active' 1);
---
--- INSERT INTO user_details(name, email, status,organisation_id)
--- values ('dummy_user2', 'user2@accenture.com','inactive' 1);
+
+
 

@@ -20,6 +20,13 @@ public class CustomExceptionHandler {
     return errorDto;
   }
   
-  // exception for unchecked exception e.g Nullpointer  msg/code -internal server error  log.error
-  
+  @ExceptionHandler(InternalServerException.class)
+  public @ResponseBody ErrorDto handleInternalServerException(final InternalServerException exception) {
+    var errorDto = new ErrorDto();
+    errorDto.setErrorMessage(exception.getMessage());
+    errorDto.setErrorCode(exception.getErrorCode());
+    log.error(exception.getStackTrace().toString());
+    return errorDto;
+  }
+
 }

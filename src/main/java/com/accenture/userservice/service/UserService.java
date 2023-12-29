@@ -9,6 +9,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +24,7 @@ public class UserService {
   private final UserRepository userRepository;
   private final OrganisationRepository organisationRepository;
   private final EmailVerificationService emailVerificationService;
+  private final PasswordEncoder passwordEncoder;
  
   @Transactional
   public User createUser(User user) throws Exception {
@@ -36,6 +40,12 @@ public class UserService {
     Organisation organisation = organisationRepository.findByDomain(domain)
             .orElseThrow(() -> new ServiceRuntimeException("Organisation not found for domain --" + domain, ErrorCodeEnum.ORGANISATION_NOT_FOUND));
     user.setOrganisation(organisation);
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
+    if(user.getEmail().contains("admin")) {
+      user.setRole(UserRoleEnum.ROLE_ADMIN);
+    } else {
+      user.setRole(UserRoleEnum.ROLE_USER);    }
+    
     //saving email verification data
     userRepository.save(user);
     emailVerificationService.sendEmailVerificationCode(user);
@@ -84,5 +94,15 @@ public class UserService {
   
   private String getDomain(String email) {
     return StringUtils.substringAfter(email, "@");
+  }
+  
+  public UserDetailsService userDetailsService() {
+    return new UserDetailsService() {
+      @Override
+      public UserDetails loadUserByUsername(String username) {
+        return userRepository.findByEmail(username)
+                .orElseThrow(() -> new ServiceRuntimeException("User not found",ErrorCodeEnum.USER_NOT_FOUND));
+      }
+    };
   }
 }

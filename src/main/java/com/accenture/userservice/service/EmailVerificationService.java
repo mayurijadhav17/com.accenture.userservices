@@ -2,13 +2,20 @@ package com.accenture.userservice.service;
 
 import com.accenture.userservice.configuration.UserRegistrationProperties;
 import com.accenture.userservice.dto.EmailVerificationDto;
+import com.accenture.userservice.dto.SendEmailRequest;
 import com.accenture.userservice.exception.ServiceRuntimeException;
 import com.accenture.userservice.feignClient.EmailFeignClient;
-import com.accenture.userservice.model.*;
+import com.accenture.userservice.model.EmailVerification;
+import com.accenture.userservice.model.ErrorCodeEnum;
+import com.accenture.userservice.model.User;
+import com.accenture.userservice.model.UserStatusEnum;
 import com.accenture.userservice.repo.EmailVerificationRepository;
 import com.accenture.userservice.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.cloud.commons.httpclient.HttpClientConfiguration;
+import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,12 +24,14 @@ import java.util.Random;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@ImportAutoConfiguration({FeignAutoConfiguration.class, HttpClientConfiguration.class})
 public class EmailVerificationService {
   
   private final EmailVerificationRepository emailVerificationRepository;
   private final UserRepository userRepository;
   private final UserRegistrationProperties userRegistrationProperties;
-  private final EmailFeignClient emailFeignClient;
+  private  EmailFeignClient emailFeignClient;
+  
   //calculate expiry date time
   private LocalDateTime calculateExpiryDate(int expiryTimeInMinutes) {
     return currentDateTIme().plusMinutes(userRegistrationProperties.getExpiration());
@@ -42,12 +51,12 @@ public class EmailVerificationService {
     emailVerification.setExpiryDate(calculateExpiryDate(userRegistrationProperties.getExpiration()));
     emailVerification.setTotalAttempts(0);
     emailVerificationRepository.save(emailVerification);
-    SendEmailRequest sendEmailRequest = null;//new SendEmailRequest();
+    SendEmailRequest sendEmailRequest = new SendEmailRequest();
     sendEmailRequest.setFromEmail("test@accenture.com");
     sendEmailRequest.setToEmail(user.getEmail());
-    sendEmailRequest.setText("Token for email verification :"+token);
-    // feign client for send email
-    emailFeignClient.sendEmail(sendEmailRequest);
+    sendEmailRequest.setText("Token for email verification :" + token);
+   // feign client for send email
+ emailFeignClient.sendEmail(sendEmailRequest);
   }
   
   public EmailVerificationDto checkEmailVerification(Long userId, int requestToken) {
