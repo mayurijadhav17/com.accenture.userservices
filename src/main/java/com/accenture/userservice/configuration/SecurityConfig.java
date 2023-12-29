@@ -21,40 +21,41 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
- // private final JwtAuthenticationFilter jwtAuthenticationFilter;
+  
+  // private final JwtAuthenticationFilter jwtAuthenticationFilter;
   private final UserService userService;
   private final PasswordEncoder passwordEncoder;
-
+  
   @Bean
   public AuthenticationProvider authenticationProvider() {
-      DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-      authProvider.setUserDetailsService(userService.userDetailsService());
-      authProvider.setPasswordEncoder(passwordEncoder);
-      return authProvider;
+    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+    authProvider.setUserDetailsService(userService.userDetailsService());
+    authProvider.setPasswordEncoder(passwordEncoder);
+    return authProvider;
   }
-
+  
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-      return config.getAuthenticationManager();
+    return config.getAuthenticationManager();
   }
   
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-    .csrf(csrf -> csrf 
-      .disable()
-    )
-    .sessionManagement(session -> session
-      .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-    )
-    .authorizeHttpRequests(authorize -> authorize
-      .requestMatchers(HttpMethod.POST, "/api/user/**", "/api/organisation/**").permitAll()
-      .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
-      .anyRequest().authenticated()
-    );
-  //  .authenticationProvider(authenticationProvider()).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
+            .csrf(csrf -> csrf
+                    .disable()
+            )
+            .sessionManagement(session -> session
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .authorizeHttpRequests(authorize -> authorize
+                    .requestMatchers(HttpMethod.POST, "/api/user/**", "/api/organisation/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/h2-console/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                    .anyRequest().authenticated()
+            );
+    //  .authenticationProvider(authenticationProvider()).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    
     return http.build();
   }
 }
