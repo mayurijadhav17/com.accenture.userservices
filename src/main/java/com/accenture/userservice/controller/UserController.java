@@ -24,13 +24,13 @@ public class UserController {
     return userService.createUser(user);
   }
   
-  @PreAuthorize("hasRole('USER')")
+  @PreAuthorize("hasRole('ADMIN')")
   @GetMapping("/{id}")
   public User getUserById(@PathVariable Long id) {
     return userService.getUserById(id);
   }
   
-  @PreAuthorize("hasRole('USER')")
+  @PreAuthorize("hasRole('ADMIN')")
   @GetMapping
   public List<User> getAllUsers() {
     return userService.getUsers();
@@ -55,6 +55,7 @@ public class UserController {
   }
   
   @PostMapping("/login")
+  @PreAuthorize("hasRole('USER')")
   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginDto loginDto) {
     
     return userService.authenticateUser(loginDto);
