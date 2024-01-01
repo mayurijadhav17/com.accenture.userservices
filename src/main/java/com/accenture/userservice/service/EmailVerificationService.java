@@ -1,6 +1,6 @@
 package com.accenture.userservice.service;
 
-import com.accenture.userservice.configuration.UserRegistrationProperties;
+import com.accenture.userservice.configuration.UserServiceGlobalProperties;
 import com.accenture.userservice.dto.EmailVerificationDto;
 import com.accenture.userservice.dto.SendEmailRequest;
 import com.accenture.userservice.exception.ServiceRuntimeException;
@@ -29,12 +29,12 @@ public class EmailVerificationService {
   
   private final EmailVerificationRepository emailVerificationRepository;
   private final UserRepository userRepository;
-  private final UserRegistrationProperties userRegistrationProperties;
+  private final UserServiceGlobalProperties userServiceGlobalProperties;
   private  EmailFeignClient emailFeignClient;
   
   //calculate expiry date time
   private LocalDateTime calculateExpiryDate(int expiryTimeInMinutes) {
-    return currentDateTIme().plusMinutes(userRegistrationProperties.getExpiration());
+    return currentDateTIme().plusMinutes(userServiceGlobalProperties.getExpiration());
   }
   
   // get the current date time
@@ -48,7 +48,7 @@ public class EmailVerificationService {
     EmailVerification emailVerification = new EmailVerification();
     emailVerification.setUser(user);
     emailVerification.setToken(token);
-    emailVerification.setExpiryDate(calculateExpiryDate(userRegistrationProperties.getExpiration()));
+    emailVerification.setExpiryDate(calculateExpiryDate(userServiceGlobalProperties.getExpiration()));
     emailVerification.setTotalAttempts(0);
     emailVerificationRepository.save(emailVerification);
     SendEmailRequest sendEmailRequest = new SendEmailRequest();
@@ -71,7 +71,7 @@ public class EmailVerificationService {
     emailVerification.setTotalAttempts(totalAttempts + 1);
     emailVerificationRepository.save(emailVerification);
     
-    if(totalAttempts + 1 < userRegistrationProperties.getMaxAttempts()) {
+    if(totalAttempts + 1 < userServiceGlobalProperties.getMaxAttempts()) {
       if(((currentDateTIme()).compareTo((emailVerification.getExpiryDate())) > 0)) {
         emailVerificationDto.setErrorCode(ErrorCodeEnum.CODE_EXPIRED);
       } else {
@@ -88,7 +88,7 @@ public class EmailVerificationService {
       userRepository.deleteById(userId);
       emailVerificationDto.setErrorCode(ErrorCodeEnum.TOTAL_ATTEMPTS_OVER);
     }
-    int remainingAttempts = userRegistrationProperties.getMaxAttempts() - emailVerification.getTotalAttempts();
+    int remainingAttempts = userServiceGlobalProperties.getMaxAttempts() - emailVerification.getTotalAttempts();
     emailVerificationDto.setRemainingAttempts(remainingAttempts);
     return emailVerificationDto;
   }

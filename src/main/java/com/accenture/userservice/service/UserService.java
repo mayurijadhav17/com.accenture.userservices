@@ -1,7 +1,9 @@
 package com.accenture.userservice.service;
 
 import com.accenture.userservice.dto.EmailVerificationDto;
+import com.accenture.userservice.dto.LoginDto;
 import com.accenture.userservice.exception.ServiceRuntimeException;
+import com.accenture.userservice.jwt.JwtUtils;
 import com.accenture.userservice.model.*;
 import com.accenture.userservice.repo.OrganisationRepository;
 import com.accenture.userservice.repo.UserRepository;
@@ -9,8 +11,16 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +29,14 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
   
   private final UserRepository userRepository;
   private final OrganisationRepository organisationRepository;
   private final EmailVerificationService emailVerificationService;
   private final PasswordEncoder passwordEncoder;
- 
+  private final AuthenticationManager authenticationManager;
+  private final JwtUtils jwtUtils;
   @Transactional
   public User createUser(User user) throws Exception {
     
@@ -96,13 +107,27 @@ public class UserService {
     return StringUtils.substringAfter(email, "@");
   }
   
-  public UserDetailsService userDetailsService() {
-    return new UserDetailsService() {
-      @Override
-      public UserDetails loadUserByUsername(String username) {
-        return userRepository.findByEmail(username)
-                .orElseThrow(() -> new ServiceRuntimeException("User not found",ErrorCodeEnum.USER_NOT_FOUND));
-      }
-    };
+
+  public ResponseEntity<?> authenticateUser( LoginDto loginDto) {
+    
+    Authentication authentication = authenticationManager
+            .authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
+    
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+    
+      User user =userRepository.findByEmail(loginDto.getUsername()).orElseThrow();
+    ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(user);
+    return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+            .body(user);
   }
+  
+  @Override
+  @Transactional
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    User user = userRepository.findByEmail(username)
+            .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
+    
+    return user.builder().build();
+  }
+  
 }
