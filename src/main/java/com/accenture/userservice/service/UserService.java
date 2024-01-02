@@ -37,6 +37,7 @@ public class UserService implements UserDetailsService {
   private final PasswordEncoder passwordEncoder;
   private final AuthenticationManager authenticationManager;
   private final JwtUtils jwtUtils;
+  
   @Transactional
   public User createUser(User user) throws Exception {
     
@@ -55,7 +56,8 @@ public class UserService implements UserDetailsService {
     if(user.getEmail().contains("admin")) {
       user.setRole(UserRoleEnum.ROLE_ADMIN);
     } else {
-      user.setRole(UserRoleEnum.ROLE_USER);    }
+      user.setRole(UserRoleEnum.ROLE_USER);
+    }
     
     //saving email verification data
     userRepository.save(user);
@@ -107,15 +109,15 @@ public class UserService implements UserDetailsService {
     return StringUtils.substringAfter(email, "@");
   }
   
-
-  public ResponseEntity<?> authenticateUser( LoginDto loginDto) {
+  public ResponseEntity<?> authenticateUser(LoginDto loginDto) {
+    User user = userRepository.findByEmail(loginDto.getUsername())
+            .orElseThrow(() -> new ServiceRuntimeException("User not found for email--" + loginDto.getUsername(), ErrorCodeEnum.USER_NOT_FOUND));
     
     Authentication authentication = authenticationManager
             .authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
     
     SecurityContextHolder.getContext().setAuthentication(authentication);
-    
-      User user =userRepository.findByEmail(loginDto.getUsername()).orElseThrow();
+
     ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(user);
     return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
             .body(user);
@@ -125,7 +127,7 @@ public class UserService implements UserDetailsService {
   @Transactional
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     User user = userRepository.findByEmail(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
+            .orElseThrow(() -> new UsernameNotFoundException("User Not Found with email: " + username));
     
     return user.builder().build();
   }
