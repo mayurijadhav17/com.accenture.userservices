@@ -55,7 +55,7 @@ public class UserController {
   }
   
   @PostMapping("/login")
-  @PreAuthorize("hasRole('USER')")
+  
   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginDto loginDto) {
     
     return userService.authenticateUser(loginDto);

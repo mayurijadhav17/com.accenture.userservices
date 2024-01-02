@@ -35,7 +35,7 @@ INSERT INTO organisation(name, domain)
 values ('Accenture', 'accenture.com');
 
 INSERT INTO user_details(name, email,password,status,role, organisation_id)
-values ('admin', 'admin@accenture.com','password','active','ADMIN', 1);
+values ('admin', 'admin@accenture.com','password','active','ROLE_ADMIN', 1);
 
 
 

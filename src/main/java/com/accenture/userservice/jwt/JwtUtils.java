@@ -7,6 +7,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
@@ -17,9 +18,10 @@ import java.util.Date;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class JwtUtils {
   
-  UserServiceGlobalProperties userServiceGlobalProperties;
+  private final UserServiceGlobalProperties userServiceGlobalProperties;
   
   public String getJwtFromCookies(HttpServletRequest request) {
     Cookie cookie = WebUtils.getCookie(request, userServiceGlobalProperties.getJwtCookie());
