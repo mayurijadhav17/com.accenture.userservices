@@ -2,7 +2,6 @@ package com.accenture.userservice.service;
 
 import com.accenture.userservice.dto.EmailVerificationDto;
 import com.accenture.userservice.exception.ServiceRuntimeException;
-import com.accenture.userservice.jwt.JwtUtils;
 import com.accenture.userservice.model.*;
 import com.accenture.userservice.repo.OrganisationRepository;
 import com.accenture.userservice.repo.RoleRepository;
@@ -11,7 +10,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,8 +28,6 @@ public class UserService implements UserDetailsService {
   private final OrganisationRepository organisationRepository;
   private final EmailVerificationService emailVerificationService;
   private final PasswordEncoder passwordEncoder;
-  private final AuthenticationManager authenticationManager;
-  private final JwtUtils jwtUtils;
   
   @Transactional
   public User createUser(User user) throws Exception {
@@ -49,15 +45,14 @@ public class UserService implements UserDetailsService {
     user.setOrganisation(organisation);
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     
-
-    Role  role = roleRepository.findByName(user.getRole().getName())
-              .orElseThrow(() -> new ServiceRuntimeException("Role not found", ErrorCodeEnum.ROLE_NOT_FOUND));
-  
+    Role role = roleRepository.findByName(user.getRole().getName())
+            .orElseThrow(() -> new ServiceRuntimeException("Role not found", ErrorCodeEnum.ROLE_NOT_FOUND));
     user.setRole(role);
-    //saving email verification data
     
+    //saving email verification data
     userRepository.save(user);
-    //emailVerificationService.sendEmailVerificationCode(user);
+    //send code email
+     emailVerificationService.sendEmailVerificationCode(user);
     return user;
   }
   

@@ -16,7 +16,6 @@ public class OrganisationController {
   
   private final OrganisationService organisationService;
   
-  
   @PostMapping
   @PreAuthorize("hasRole('ADMIN')")
   public Organisation addOrganisation(@RequestBody @Valid Organisation organisation) throws Exception {
@@ -35,14 +34,12 @@ public class OrganisationController {
     return organisationService.getAllOrganisations();
   }
   
- 
   @DeleteMapping("{id}")
   @PreAuthorize("hasRole('ADMIN')")
   public void deleteOrganisation(@PathVariable Long id) {
     organisationService.deleteById(id);
   }
   
-
   @PutMapping("{id}")
   @PreAuthorize("hasRole('ADMIN')")
   public Organisation updateOrganisation(@RequestBody @Valid Organisation organisation, @PathVariable Long id) throws Exception {

@@ -16,12 +16,10 @@ import java.util.List;
 public class UserController {
   private final UserService userService;
   
-  
   @PostMapping
   public User addUser(@RequestBody @Valid User user) throws Exception {
     return userService.createUser(user);
   }
-  
   
   @GetMapping("/{id}")
   @PreAuthorize("hasRole('USER')")
@@ -29,27 +27,23 @@ public class UserController {
     return userService.getUserById(id);
   }
   
- 
   @GetMapping
   @PreAuthorize("hasRole('USER')")
   public List<User> getAllUsers() {
     return userService.getUsers();
   }
   
- 
   @PutMapping("{id}")
   @PreAuthorize("hasRole('ADMIN')")
   public User updateUser(@RequestBody @Valid User user, @PathVariable Long id) throws Exception {
     return userService.updateUserDetails(user, id);
   }
   
-  
   @DeleteMapping("{id}")
   @PreAuthorize("hasRole('ADMIN')")
   public void deleteUser(@PathVariable Long id) {
     userService.deleteUserById(id);
   }
-  
   
   @PostMapping("/emailVerification/{email}/{token}")
   public EmailVerificationDto emailVerificationToken(@PathVariable String email, @PathVariable Integer token) throws Exception {

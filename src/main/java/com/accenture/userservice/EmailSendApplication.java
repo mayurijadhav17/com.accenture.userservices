@@ -6,13 +6,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+
 @Slf4j
 @RequiredArgsConstructor
 public class EmailSendApplication {
-   
-
-  public static void main(String args[])
-  {
+  
+  public static void main(String args[]) {
     WireMockServer wireMockServer = new WireMockServer(options().port(8081));
     wireMockServer.start();
     
@@ -22,7 +21,6 @@ public class EmailSendApplication {
     log.info("Server Start");
     log.error(wireMockServer.toString());
     log.error(wireMockServer.getStubMappings().toString());
-
-  
+    
   }
 }

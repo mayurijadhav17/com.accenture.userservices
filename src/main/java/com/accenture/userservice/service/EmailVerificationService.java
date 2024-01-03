@@ -4,7 +4,6 @@ import com.accenture.userservice.configuration.UserServiceGlobalProperties;
 import com.accenture.userservice.dto.EmailVerificationDto;
 import com.accenture.userservice.dto.SendEmailRequest;
 import com.accenture.userservice.exception.ServiceRuntimeException;
-import com.accenture.userservice.feignClient.EmailFeignClient;
 import com.accenture.userservice.model.EmailVerification;
 import com.accenture.userservice.model.ErrorCodeEnum;
 import com.accenture.userservice.model.User;
@@ -30,7 +29,7 @@ public class EmailVerificationService {
   private final EmailVerificationRepository emailVerificationRepository;
   private final UserRepository userRepository;
   private final UserServiceGlobalProperties userServiceGlobalProperties;
-  private  EmailFeignClient emailFeignClient;
+  //private final EmailFeignClient emailFeignClient;
   
   //calculate expiry date time
   private LocalDateTime calculateExpiryDate(int expiryTimeInMinutes) {
@@ -55,8 +54,8 @@ public class EmailVerificationService {
     sendEmailRequest.setFromEmail("test@accenture.com");
     sendEmailRequest.setToEmail(user.getEmail());
     sendEmailRequest.setText("Token for email verification :" + token);
-   // feign client for send email
- emailFeignClient.sendEmail(sendEmailRequest);
+    // feign client for send email
+  //  emailFeignClient.sendEmail(sendEmailRequest);
   }
   
   public EmailVerificationDto checkEmailVerification(Long userId, int requestToken) {

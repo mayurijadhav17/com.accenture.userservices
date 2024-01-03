@@ -20,8 +20,7 @@ import java.util.Date;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtUtils {
- private final  UserServiceGlobalProperties userServiceGlobalProperties;
- 
+  private final UserServiceGlobalProperties userServiceGlobalProperties;
   
   public String getJwtFromCookies(HttpServletRequest request) {
     Cookie cookie = WebUtils.getCookie(request, userServiceGlobalProperties.getJwtCookie());

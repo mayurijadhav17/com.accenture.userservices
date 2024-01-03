@@ -21,9 +21,9 @@ import java.io.IOException;
 @Service
 public class AuthTokenFilter extends OncePerRequestFilter {
   @Autowired
-  private  JwtUtils jwtUtils;
+  private JwtUtils jwtUtils;
   @Autowired
-  private  UserService userService;
+  private UserService userService;
   
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

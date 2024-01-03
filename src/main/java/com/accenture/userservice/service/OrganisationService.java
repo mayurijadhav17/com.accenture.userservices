@@ -14,8 +14,6 @@ import java.util.List;
 public class OrganisationService {
   private final OrganisationRepository organisationRepository;
   
-  // private final RestTemplate restTemplate;
-  
   public Organisation create(Organisation organisation) throws Exception {
     if(organisationRepository.existsByDomain(organisation.getDomain())) {
       throw new ServiceRuntimeException("Organisation already exists for domain--" + organisation.getDomain(), ErrorCodeEnum.ORGANISATION_DOMAIN_EXISTS);
