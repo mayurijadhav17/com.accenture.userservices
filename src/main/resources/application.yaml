@@ -12,11 +12,6 @@ feign:
 
 
 spring:
-  main:
-    allow-circular-references: true
-server:
-  forward-headers-strategy: framework
-
   datasource:
     url: jdbc:h2:mem:testdb
     username: sa

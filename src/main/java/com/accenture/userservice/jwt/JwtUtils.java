@@ -1,12 +1,13 @@
 package com.accenture.userservice.jwt;
 
 import com.accenture.userservice.configuration.UserServiceGlobalProperties;
-import com.accenture.userservice.model.User;
+import com.accenture.userservice.service.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
@@ -16,12 +17,12 @@ import org.springframework.web.util.WebUtils;
 import java.security.Key;
 import java.util.Date;
 
-@Slf4j
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class JwtUtils {
-  
-  private final UserServiceGlobalProperties userServiceGlobalProperties;
+ private final  UserServiceGlobalProperties userServiceGlobalProperties;
+ 
   
   public String getJwtFromCookies(HttpServletRequest request) {
     Cookie cookie = WebUtils.getCookie(request, userServiceGlobalProperties.getJwtCookie());
@@ -32,8 +33,8 @@ public class JwtUtils {
     }
   }
   
-  public ResponseCookie generateJwtCookie(User user) {
-    String jwt = generateTokenFromUsername(user.getUsername());
+  public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
+    String jwt = generateTokenFromUsername(userPrincipal.getUsername());
     ResponseCookie cookie = ResponseCookie.from(userServiceGlobalProperties.getJwtCookie(), jwt).path("/api").maxAge(24 * 60 * 60).httpOnly(true).build();
     return cookie;
   }

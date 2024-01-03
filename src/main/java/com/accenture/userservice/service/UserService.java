@@ -1,7 +1,6 @@
 package com.accenture.userservice.service;
 
 import com.accenture.userservice.dto.EmailVerificationDto;
-import com.accenture.userservice.dto.LoginDto;
 import com.accenture.userservice.exception.ServiceRuntimeException;
 import com.accenture.userservice.jwt.JwtUtils;
 import com.accenture.userservice.model.*;
@@ -11,13 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -53,15 +47,12 @@ public class UserService implements UserDetailsService {
             .orElseThrow(() -> new ServiceRuntimeException("Organisation not found for domain --" + domain, ErrorCodeEnum.ORGANISATION_NOT_FOUND));
     user.setOrganisation(organisation);
     user.setPassword(passwordEncoder.encode(user.getPassword()));
-    if(user.getEmail().contains("admin")) {
-      user.setRole(UserRoleEnum.ROLE_ADMIN);
-    } else {
-      user.setRole(UserRoleEnum.ROLE_USER);
-    }
-    
+    Set<UserRoleEnum> roles = user.getRole();
+   
+    user.setRole(roles);
     //saving email verification data
     userRepository.save(user);
-    emailVerificationService.sendEmailVerificationCode(user);
+    //emailVerificationService.sendEmailVerificationCode(user);
     return user;
   }
   
@@ -87,7 +78,7 @@ public class UserService implements UserDetailsService {
     if(userRepository.existsUserByEmail(userRes.getEmail())) {
       throw new ServiceRuntimeException("User with email already exists--" + userRes.getEmail(), ErrorCodeEnum.EMAIL_EXISTS);
     }
-    user.setName(userRes.getName());
+    user.setUsername(userRes.getUsername());
     user.setEmail(user.getEmail());
     String domain = getDomain(userRes.getEmail());
     if(!organisationRepository.existsByDomain(domain)) {
@@ -108,28 +99,14 @@ public class UserService implements UserDetailsService {
   private String getDomain(String email) {
     return StringUtils.substringAfter(email, "@");
   }
-  
-  public ResponseEntity<?> authenticateUser(LoginDto loginDto) {
-    User user = userRepository.findByEmail(loginDto.getUsername())
-            .orElseThrow(() -> new ServiceRuntimeException("User not found for email--" + loginDto.getUsername(), ErrorCodeEnum.USER_NOT_FOUND));
-    
-    Authentication authentication = authenticationManager
-            .authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
-    
-    SecurityContextHolder.getContext().setAuthentication(authentication);
 
-    ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(user);
-    return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-            .body(user);
-  }
-  
   @Override
   @Transactional
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    User user = userRepository.findByEmail(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User Not Found with email: " + username));
+    User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
     
-    return user.builder().build();
+    return UserDetailsImpl.build(user);
   }
   
 }
