@@ -16,31 +16,35 @@ public class OrganisationController {
   
   private final OrganisationService organisationService;
   
-  @PreAuthorize("hasRole('ADMIN')")
+  
   @PostMapping
+  @PreAuthorize("hasRole('ADMIN')")
   public Organisation addOrganisation(@RequestBody @Valid Organisation organisation) throws Exception {
     return organisationService.create(organisation);
   }
-  @PreAuthorize("hasRole('USER')")
+  
   @GetMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
   public Organisation getOrganisationById(@PathVariable Long id) {
     return organisationService.getOrganisationById(id);
   }
   
   @GetMapping
-
+  @PreAuthorize("hasRole('ADMIN')")
   public List<Organisation> getAllOrganisation() {
     return organisationService.getAllOrganisations();
   }
   
-  @PreAuthorize("hasRole('ADMIN')")
+ 
   @DeleteMapping("{id}")
+  @PreAuthorize("hasRole('ADMIN')")
   public void deleteOrganisation(@PathVariable Long id) {
     organisationService.deleteById(id);
   }
   
-  @PreAuthorize("hasRole('ADMIN')")
+
   @PutMapping("{id}")
+  @PreAuthorize("hasRole('ADMIN')")
   public Organisation updateOrganisation(@RequestBody @Valid Organisation organisation, @PathVariable Long id) throws Exception {
     return organisationService.updateOrganisationDetails(organisation, id);
   }

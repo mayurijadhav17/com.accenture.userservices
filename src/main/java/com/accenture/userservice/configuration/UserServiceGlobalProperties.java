@@ -11,7 +11,7 @@ public class UserServiceGlobalProperties {
   int maxAttempts = 3;
   int expiration = 1440;
   
-  String jwtSecret = "===user===";
+  String jwtSecret = "======================userServiceKey======================";
   
   int jwtExpirationMs = 86400000;
   

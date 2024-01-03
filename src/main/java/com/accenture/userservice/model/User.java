@@ -6,8 +6,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
-import java.util.Set;
-
 @Data
 @Builder
 
@@ -22,8 +20,8 @@ public class User  {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   
-  @NotEmpty(message = "Please enter user name")
-  private String username;
+  @NotEmpty(message = "Please enter  name")
+  private String name;
   
   @Email(message = "Please enter valid emailId ")
   private String email;
@@ -33,10 +31,8 @@ public class User  {
   
   private String password;
   
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
-  private Set<UserRoleEnum> role;
-  
+  @ManyToOne
+  private Role role;
   @JsonIgnore
   @ManyToOne
   private Organisation organisation;

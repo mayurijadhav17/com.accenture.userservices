@@ -22,31 +22,35 @@ public class UserController {
     return userService.createUser(user);
   }
   
-  @PreAuthorize("hasRole('ADMIN')")
+  
   @GetMapping("/{id}")
+  @PreAuthorize("hasRole('USER')")
   public User getUserById(@PathVariable Long id) {
     return userService.getUserById(id);
   }
   
  
   @GetMapping
+  @PreAuthorize("hasRole('USER')")
   public List<User> getAllUsers() {
     return userService.getUsers();
   }
   
-  @PreAuthorize("hasRole('ADMIN')")
+ 
   @PutMapping("{id}")
+  @PreAuthorize("hasRole('ADMIN')")
   public User updateUser(@RequestBody @Valid User user, @PathVariable Long id) throws Exception {
     return userService.updateUserDetails(user, id);
   }
   
-  @PreAuthorize("hasRole('ADMIN')")
+  
   @DeleteMapping("{id}")
+  @PreAuthorize("hasRole('ADMIN')")
   public void deleteUser(@PathVariable Long id) {
     userService.deleteUserById(id);
   }
   
-  @PreAuthorize("hasRole('USER')")
+  
   @PostMapping("/emailVerification/{email}/{token}")
   public EmailVerificationDto emailVerificationToken(@PathVariable String email, @PathVariable Integer token) throws Exception {
     return userService.emailVerificationToken(email, token);

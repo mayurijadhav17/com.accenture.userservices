@@ -5,6 +5,7 @@ import com.accenture.userservice.exception.ServiceRuntimeException;
 import com.accenture.userservice.jwt.JwtUtils;
 import com.accenture.userservice.model.*;
 import com.accenture.userservice.repo.OrganisationRepository;
+import com.accenture.userservice.repo.RoleRepository;
 import com.accenture.userservice.repo.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Slf4j
@@ -26,6 +26,7 @@ import java.util.Set;
 public class UserService implements UserDetailsService {
   
   private final UserRepository userRepository;
+  private final RoleRepository roleRepository;
   private final OrganisationRepository organisationRepository;
   private final EmailVerificationService emailVerificationService;
   private final PasswordEncoder passwordEncoder;
@@ -47,10 +48,14 @@ public class UserService implements UserDetailsService {
             .orElseThrow(() -> new ServiceRuntimeException("Organisation not found for domain --" + domain, ErrorCodeEnum.ORGANISATION_NOT_FOUND));
     user.setOrganisation(organisation);
     user.setPassword(passwordEncoder.encode(user.getPassword()));
-    Set<UserRoleEnum> roles = user.getRole();
-   
-    user.setRole(roles);
+    
+
+    Role  role = roleRepository.findByName(user.getRole().getName())
+              .orElseThrow(() -> new ServiceRuntimeException("Role not found", ErrorCodeEnum.ROLE_NOT_FOUND));
+  
+    user.setRole(role);
     //saving email verification data
+    
     userRepository.save(user);
     //emailVerificationService.sendEmailVerificationCode(user);
     return user;
@@ -78,7 +83,7 @@ public class UserService implements UserDetailsService {
     if(userRepository.existsUserByEmail(userRes.getEmail())) {
       throw new ServiceRuntimeException("User with email already exists--" + userRes.getEmail(), ErrorCodeEnum.EMAIL_EXISTS);
     }
-    user.setUsername(userRes.getUsername());
+    user.setName(userRes.getName());
     user.setEmail(user.getEmail());
     String domain = getDomain(userRes.getEmail());
     if(!organisationRepository.existsByDomain(domain)) {
@@ -99,14 +104,18 @@ public class UserService implements UserDetailsService {
   private String getDomain(String email) {
     return StringUtils.substringAfter(email, "@");
   }
-
-  @Override
+  
   @Transactional
-  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
+  @Override
+  public UserDetails loadUserByUsername(String username)
+          throws UsernameNotFoundException {
+    User user = userRepository.findByEmail(username).orElseThrow();
     
-    return UserDetailsImpl.build(user);
+    if(user == null) {
+      throw new UsernameNotFoundException("Could not find user");
+    }
+    
+    return new UserDetailsImpl(user);
   }
   
 }
