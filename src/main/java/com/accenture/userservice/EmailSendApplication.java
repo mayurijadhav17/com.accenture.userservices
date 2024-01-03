@@ -2,13 +2,12 @@ package com.accenture.userservice;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
 @Slf4j
-@RequiredArgsConstructor
+
 public class EmailSendApplication {
   
   public static void main(String args[]) {
