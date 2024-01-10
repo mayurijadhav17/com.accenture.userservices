@@ -2,7 +2,6 @@ package com.accenture.userservice.controller;
 
 import com.accenture.userservice.dto.LoginDto;
 import com.accenture.userservice.jwt.JwtUtils;
-import com.accenture.userservice.repo.UserRepository;
 import com.accenture.userservice.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -12,7 +11,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,11 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
   
   private final AuthenticationManager authenticationManager;
-  
-  private final UserRepository userRepository;
-  
-  private final PasswordEncoder encoder;
-  
   private final JwtUtils jwtUtils;
   
   @PostMapping("/login")

@@ -20,12 +20,12 @@ class OrganisationControllerTest {
   @Mock
   private OrganisationService service;
   private OrganisationController organisationController;
-  
+
   @BeforeEach
   void setUp() {
     organisationController = new OrganisationController(service);
   }
-  
+
   @Test
   void testCreateOrganisation() throws Exception {
     // Setup
@@ -36,7 +36,7 @@ class OrganisationControllerTest {
     Organisation result = organisationController.addOrganisation(organisation);
     assertEquals(expectedResult, result);
   }
-  
+
   @Test
   void testGetOrganisationById() throws Exception {
     // Setup
@@ -48,9 +48,9 @@ class OrganisationControllerTest {
     when(organisationController.getOrganisationById(1L)).thenReturn(expectedResult);
     Organisation result = organisationController.getOrganisationById(1L);
     assertEquals(expectedResult, result);
-    
+
   }
-  
+
   @Test
   void testGetOrganisationList() throws Exception {
     // Setup
@@ -62,9 +62,9 @@ class OrganisationControllerTest {
     when(organisationController.getAllOrganisation()).thenReturn(list);
     List<Organisation> result = organisationController.getAllOrganisation();
     assertEquals(list, result);
-    
+
   }
-  
+
   @Test
   void testUpdateOrganisation() throws Exception {
     // Setup

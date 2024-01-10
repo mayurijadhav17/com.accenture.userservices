@@ -12,14 +12,14 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 public class EmailSendApplication {
   
   public static void main(String args[]) {
-    WireMockServer wireMockServer = new WireMockServer(options().port(8081));
+    WireMockServer wireMockServer = new WireMockServer(options().port(8082));
     wireMockServer.start();
     
     wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/email/send"))
             .willReturn(aResponse().withStatus(200)));
     log.info("Server Start");
-    log.error(wireMockServer.toString());
-    log.error(wireMockServer.getStubMappings().toString());
+    log.info(wireMockServer.toString());
+    log.info(wireMockServer.getStubMappings().toString());
     
   }
 }

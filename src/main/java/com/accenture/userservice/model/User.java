@@ -28,11 +28,10 @@ public class User  {
   
   @Enumerated(EnumType.STRING)
   private UserStatusEnum status;
-  
   private String password;
-  
-  @ManyToOne
-  private Role role;
+
+  @Enumerated(EnumType.STRING)
+  private UserRoleEnum role;
   @JsonIgnore
   @ManyToOne
   private Organisation organisation;
