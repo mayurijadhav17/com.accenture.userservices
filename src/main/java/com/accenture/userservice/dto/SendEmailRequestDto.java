@@ -3,7 +3,7 @@ package com.accenture.userservice.dto;
 import lombok.Data;
 
 @Data
-public class SendEmailRequest {
+public class SendEmailRequestDto {
    String fromEmail;
    String toEmail;
    String subject;

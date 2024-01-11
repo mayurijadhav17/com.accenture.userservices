@@ -2,7 +2,7 @@ package com.accenture.userservice.service;
 
 import com.accenture.userservice.configuration.UserServiceGlobalProperties;
 import com.accenture.userservice.dto.EmailVerificationDto;
-import com.accenture.userservice.dto.SendEmailRequest;
+import com.accenture.userservice.dto.SendEmailRequestDto;
 import com.accenture.userservice.exception.ServiceRuntimeException;
 import com.accenture.userservice.feignClient.EmailClient;
 import com.accenture.userservice.model.EmailVerification;
@@ -44,19 +44,19 @@ public class EmailVerificationService {
 
     public void sendEmailVerificationCode(User user) throws Exception {
         // 6 digit token generation
-        int token = new Random().nextInt(100000, 999999);
+        int token = new Random().nextInt(userServiceGlobalProperties.getToken_originValue(), userServiceGlobalProperties.getToken_boundValue());
         EmailVerification emailVerification = new EmailVerification();
         emailVerification.setUser(user);
         emailVerification.setToken(token);
         emailVerification.setExpiryDate(calculateExpiryDate(userServiceGlobalProperties.getExpiration()));
         emailVerification.setTotalAttempts(0);
         emailVerificationRepository.save(emailVerification);
-        SendEmailRequest sendEmailRequest = new SendEmailRequest();
-        sendEmailRequest.setFromEmail("test@accenture.com");
-        sendEmailRequest.setToEmail(user.getEmail());
-        sendEmailRequest.setText("Token for email verification :" + token);
+        SendEmailRequestDto sendEmailRequestDto = new SendEmailRequestDto();
+        sendEmailRequestDto.setFromEmail("test@accenture.com");
+        sendEmailRequestDto.setToEmail(user.getEmail());
+        sendEmailRequestDto.setText("Token for email verification :" + token);
         //feign client for send email
-        emailClient.sendEmail(sendEmailRequest);
+        emailClient.sendEmail(sendEmailRequestDto);
     }
 
     public EmailVerificationDto checkEmailVerification(Long userId, int requestToken) {

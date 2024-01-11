@@ -12,7 +12,7 @@ CREATE TABLE user_details
     email           VARCHAR(100),
     status          VARCHAR(100),
     password        VARCHAR(100),
-    role_id Long,
+    role            VARCHAR(100),
     organisation_id Long
 );
 

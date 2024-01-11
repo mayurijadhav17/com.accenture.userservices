@@ -1,6 +1,6 @@
 package com.accenture.userservice.jwt;
 
-import com.accenture.userservice.configuration.UserServiceGlobalProperties;
+import com.accenture.userservice.configuration.JwtConfigurationProperties;
 import com.accenture.userservice.service.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -20,10 +20,10 @@ import java.util.Date;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtUtils {
-  private final UserServiceGlobalProperties userServiceGlobalProperties;
+  private final JwtConfigurationProperties jwtProperties;
   
   public String getJwtFromCookies(HttpServletRequest request) {
-    Cookie cookie = WebUtils.getCookie(request, userServiceGlobalProperties.getJwtCookie());
+    Cookie cookie = WebUtils.getCookie(request, jwtProperties.getJwtCookie());
     if(cookie != null) {
       return cookie.getValue();
     } else {
@@ -33,12 +33,12 @@ public class JwtUtils {
   
   public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
     String jwt = generateTokenFromUsername(userPrincipal.getUsername());
-    ResponseCookie cookie = ResponseCookie.from(userServiceGlobalProperties.getJwtCookie(), jwt).path("/api").maxAge(24 * 60 * 60).httpOnly(true).build();
+    ResponseCookie cookie = ResponseCookie.from(jwtProperties.getJwtCookie(), jwt).path("/api").maxAge(24 * 60 * 60).httpOnly(true).build();
     return cookie;
   }
   
   public ResponseCookie getCleanJwtCookie() {
-    ResponseCookie cookie = ResponseCookie.from(userServiceGlobalProperties.getJwtCookie(), null).path("/api").build();
+    ResponseCookie cookie = ResponseCookie.from(jwtProperties.getJwtCookie(), null).path("/api").build();
     return cookie;
   }
   
@@ -48,7 +48,7 @@ public class JwtUtils {
   }
   
   private Key key() {
-    return Keys.hmacShaKeyFor(Decoders.BASE64.decode(userServiceGlobalProperties.getJwtSecret()));
+    return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtProperties.getJwtSecret()));
   }
   
   public boolean validateJwtToken(String authToken) {
@@ -72,7 +72,7 @@ public class JwtUtils {
     return Jwts.builder()
             .setSubject(username)
             .setIssuedAt(new Date())
-            .setExpiration(new Date((new Date()).getTime() + userServiceGlobalProperties.getExpiration()))
+            .setExpiration(new Date((new Date()).getTime() + jwtProperties.getJwtExpirationMs()))
             .signWith(key(), SignatureAlgorithm.HS256)
             .compact();
   }

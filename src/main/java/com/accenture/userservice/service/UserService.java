@@ -76,9 +76,6 @@ public class UserService implements UserDetailsService {
         user.setName(userRes.getName());
         user.setEmail(user.getEmail());
         String domain = getDomain(userRes.getEmail());
-        if (!organisationRepository.existsByDomain(domain)) {
-            throw new Exception("EMAIL_INVALID" + domain);
-        }
         Organisation organisation = organisationRepository.findByDomain(domain)
                 .orElseThrow(() -> new ServiceRuntimeException("organisation not found for domain--" + domain, ErrorCodeEnum.ORGANISATION_NOT_FOUND));
         user.setOrganisation(organisation);
@@ -99,11 +96,8 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username).orElseThrow();
-
-        if (user == null) {
-            throw new UsernameNotFoundException("Could not find user");
-        }
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new ServiceRuntimeException("User not found for username--" + username, ErrorCodeEnum.USER_NOT_FOUND));
 
         return new UserDetailsImpl(user);
     }

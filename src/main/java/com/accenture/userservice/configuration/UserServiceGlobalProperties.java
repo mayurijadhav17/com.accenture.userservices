@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class UserServiceGlobalProperties {
   int maxAttempts = 3;
   int expiration = 1440;
-  String jwtSecret = "======================userServiceKey======================";
-  int jwtExpirationMs = 86400000;
-  String jwtCookie = "user-jwt-token";
+  int token_originValue =100000;
+  int token_boundValue=999999;
+
 }

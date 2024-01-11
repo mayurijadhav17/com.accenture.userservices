@@ -6,27 +6,36 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.nio.file.AccessDeniedException;
+
 @Slf4j
 @ControllerAdvice
 public class CustomExceptionHandler {
-  
-  
-  @ExceptionHandler(ServiceRuntimeException.class)
-  public @ResponseBody ErrorDto handleServiceRuntimeException(final ServiceRuntimeException exception) {
-    var errorDto = new ErrorDto();
-    errorDto.setErrorMessage(exception.getMessage());
-    errorDto.setErrorCode(exception.getErrorCode());
-    log.error(exception.getStackTrace().toString());
-    return errorDto;
-  }
-  
-  @ExceptionHandler(InternalServerException.class)
-  public @ResponseBody ErrorDto handleInternalServerException(final InternalServerException exception) {
-    var errorDto = new ErrorDto();
-    errorDto.setErrorMessage(exception.getMessage());
-    errorDto.setErrorCode(exception.getErrorCode());
-    log.error(exception.getStackTrace().toString());
-    return errorDto;
-  }
 
+
+    @ExceptionHandler(ServiceRuntimeException.class)
+    public @ResponseBody ErrorDto handleServiceRuntimeException(final ServiceRuntimeException exception) {
+        var errorDto = new ErrorDto();
+        errorDto.setErrorMessage(exception.getMessage());
+        errorDto.setErrorCode(exception.getErrorCode());
+        log.error(exception.getStackTrace().toString());
+        return errorDto;
+    }
+
+    @ExceptionHandler(NullPointerException.class)
+    public @ResponseBody ErrorDto handleNullPointerException(final NullPointerException exception) {
+        var errorDto = new ErrorDto();
+        errorDto.setErrorMessage(exception.getMessage());
+      //  errorDto.setErrorCode(exception.getMessage());
+        log.error(exception.getStackTrace().toString());
+        return errorDto;
+    }
+    @ExceptionHandler(AccessDeniedException.class)
+    public @ResponseBody ErrorDto handleAuthorizationException(final AccessDeniedException exception) {
+        var errorDto = new ErrorDto();
+        errorDto.setErrorMessage(exception.getMessage());
+      //  errorDto.setErrorCode(exception.e);
+        log.error(exception.getStackTrace().toString());
+        return errorDto;
+    }
 }
