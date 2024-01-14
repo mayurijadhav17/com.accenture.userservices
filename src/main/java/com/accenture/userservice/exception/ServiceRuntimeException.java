@@ -7,8 +7,8 @@ public class ServiceRuntimeException extends RuntimeException {
   
   private String errorCode;
   
-  public ServiceRuntimeException(String message, Enum errorCode) {
-    super(message);
+  public ServiceRuntimeException(Enum errorCode,String template,String parameter) {
+    super(template+"---> "+parameter);
     this.errorCode = errorCode.toString();
   }
 }

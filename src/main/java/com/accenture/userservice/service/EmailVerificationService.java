@@ -60,9 +60,9 @@ public class EmailVerificationService {
     }
 
     public EmailVerificationDto checkEmailVerification(Long userId, int requestToken) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ServiceRuntimeException("user not found for id--" + userId, ErrorCodeEnum.USER_NOT_FOUND));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ServiceRuntimeException(ErrorCodeEnum.USER_NOT_FOUND,ErrorCodeEnum.USER_NOT_FOUND.getTemplate(),userId.toString()));
         EmailVerification emailVerification = emailVerificationRepository
-                .findById(userId).orElseThrow(() -> new ServiceRuntimeException("Record not found for user", ErrorCodeEnum.USER_NOT_FOUND));
+                .findById(userId).orElseThrow(() -> new ServiceRuntimeException(ErrorCodeEnum.USER_NOT_FOUND,ErrorCodeEnum.USER_NOT_FOUND.getTemplate(),userId.toString()));
 
         int totalAttempts = emailVerification.getTotalAttempts();
         int token = emailVerification.getToken();

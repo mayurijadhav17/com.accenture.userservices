@@ -26,15 +26,13 @@ public class CustomExceptionHandler {
     public @ResponseBody ErrorDto handleNullPointerException(final NullPointerException exception) {
         var errorDto = new ErrorDto();
         errorDto.setErrorMessage(exception.getMessage());
-      //  errorDto.setErrorCode(exception.getMessage());
-        log.error(exception.getStackTrace().toString());
+       log.error(exception.getStackTrace().toString());
         return errorDto;
     }
     @ExceptionHandler(AccessDeniedException.class)
     public @ResponseBody ErrorDto handleAuthorizationException(final AccessDeniedException exception) {
         var errorDto = new ErrorDto();
         errorDto.setErrorMessage(exception.getMessage());
-      //  errorDto.setErrorCode(exception.e);
         log.error(exception.getStackTrace().toString());
         return errorDto;
     }

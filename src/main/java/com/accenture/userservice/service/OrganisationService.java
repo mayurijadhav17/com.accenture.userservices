@@ -16,14 +16,14 @@ public class OrganisationService {
 
     public Organisation create(Organisation organisation) throws Exception {
         if (organisationRepository.existsByDomain(organisation.getDomain())) {
-            throw new ServiceRuntimeException("Organisation already exists for domain--" + organisation.getDomain(), ErrorCodeEnum.ORGANISATION_DOMAIN_EXISTS);
+            throw new ServiceRuntimeException(ErrorCodeEnum.ORGANISATION_DOMAIN_EXISTS,ErrorCodeEnum.ORGANISATION_DOMAIN_EXISTS.getTemplate(),organisation.getDomain());
         }
         return organisationRepository.save(organisation);
     }
 
     public Organisation getOrganisationById(Long id) {
         return organisationRepository.findById(id).
-                orElseThrow(() -> new ServiceRuntimeException("Organisation not found for id--" + id, ErrorCodeEnum.ORGANISATION_NOT_FOUND));
+                orElseThrow(() -> new ServiceRuntimeException(ErrorCodeEnum.ORGANISATION_NOT_FOUND,ErrorCodeEnum.ORGANISATION_NOT_FOUND.getTemplate(),id.toString()));
     }
 
     public List<Organisation> getAllOrganisations() {
@@ -32,16 +32,16 @@ public class OrganisationService {
 
     public void deleteById(Long id) {
         if (!organisationRepository.existsById(id)) {
-            throw new ServiceRuntimeException("Organisation not found for id--" + id, ErrorCodeEnum.ORGANISATION_NOT_FOUND);
+            throw new ServiceRuntimeException(ErrorCodeEnum.ORGANISATION_NOT_FOUND,ErrorCodeEnum.ORGANISATION_NOT_FOUND.getTemplate(),id.toString());
         }
         organisationRepository.deleteById(id);
     }
 
     public Organisation updateOrganisationDetails(Organisation organisationRequest, Long id) throws Exception {
         Organisation organisation = organisationRepository.findById(id)
-                .orElseThrow(() -> new ServiceRuntimeException("Organisation not found for id--" + id, ErrorCodeEnum.ORGANISATION_NOT_FOUND));
+                .orElseThrow(() -> new ServiceRuntimeException(ErrorCodeEnum.ORGANISATION_NOT_FOUND,ErrorCodeEnum.ORGANISATION_NOT_FOUND.getTemplate(),id.toString()));
         if (organisationRepository.existsByDomain(organisationRequest.getDomain())) {
-            throw new ServiceRuntimeException("Organisation already exist for domain--" + organisationRequest.getDomain(), ErrorCodeEnum.ORGANISATION_DOMAIN_EXISTS);
+            throw new ServiceRuntimeException(ErrorCodeEnum.ORGANISATION_DOMAIN_EXISTS,ErrorCodeEnum.ORGANISATION_DOMAIN_EXISTS.getTemplate(), organisationRequest.getDomain());
         }
         organisation.setName(organisationRequest.getName());
         organisation.setDomain(organisationRequest.getDomain());
