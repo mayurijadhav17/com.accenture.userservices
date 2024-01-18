@@ -45,7 +45,7 @@ public class EmailVerificationService {
     public void sendEmailVerificationCode(User user) throws Exception {
 
         int token = 0;
-        for (int i = 0 ; i < userServiceGlobalProperties.getTokenDigits() ; i++){
+        for (int i = 0 ; i < userServiceGlobalProperties.getTokenSize() ; i++){
             token+=(new Random().nextInt(10)*Math.pow(10, i));
         }
         EmailVerification emailVerification = new EmailVerification();

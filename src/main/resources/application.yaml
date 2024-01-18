@@ -1,6 +1,12 @@
 user-registration:
   max-attempts: 3
   expiration: 1440
+  tokenSize: 6
+
+user-security:
+  jwtSecret : ======================userServiceKey======================
+  jwtExpirationMs: 900000
+  jwtCookie: user-jwt-token
 
 feign:
   client:

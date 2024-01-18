@@ -1,7 +1,7 @@
 package com.accenture.userservice.controller;
 
 import com.accenture.userservice.dto.LoginDto;
-import com.accenture.userservice.jwt.JwtUtils;
+import com.accenture.userservice.jwt.JwtBuilder;
 import com.accenture.userservice.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
   
   private final AuthenticationManager authenticationManager;
-  private final JwtUtils jwtUtils;
+  private final JwtBuilder jwtBuilder;
   
   @PostMapping("/login")
   public ResponseEntity<?> authenticateUser(@RequestBody LoginDto loginRequest) {
@@ -34,7 +34,7 @@ public class AuthController {
     
     UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
     
-    ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+    ResponseCookie jwtCookie = jwtBuilder.generateJwtCookie(userDetails);
     
     return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
             .body(userDetails);
@@ -42,7 +42,7 @@ public class AuthController {
   
   @PostMapping("/logout")
   public ResponseEntity<?> logoutUser() {
-    ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
+    ResponseCookie cookie = jwtBuilder.getCleanJwtCookie();
     return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
             .body("You've been signed out!");
   }

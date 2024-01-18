@@ -19,7 +19,7 @@ import java.util.Date;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class JwtUtils {
+public class JwtBuilder {
   private final JwtConfigurationProperties jwtProperties;
   
   public String getJwtFromCookies(HttpServletRequest request) {

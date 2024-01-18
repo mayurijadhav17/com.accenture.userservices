@@ -21,7 +21,7 @@ import java.io.IOException;
 @Service
 public class AuthTokenFilter extends OncePerRequestFilter {
   @Autowired
-  private JwtUtils jwtUtils;
+  private JwtBuilder jwtBuilder;
   @Autowired
   private UserService userService;
   
@@ -30,8 +30,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
           throws ServletException, IOException {
     try {
       String jwt = parseJwt(request);
-      if(jwt != null && jwtUtils.validateJwtToken(jwt)) {
-        String username = jwtUtils.getUserNameFromJwtToken(jwt);
+      if(jwt != null && jwtBuilder.validateJwtToken(jwt)) {
+        String username = jwtBuilder.getUserNameFromJwtToken(jwt);
         
         UserDetails userDetails = userService.loadUserByUsername(username);
         
@@ -52,7 +52,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
   }
   
   private String parseJwt(HttpServletRequest request) {
-    String jwt = jwtUtils.getJwtFromCookies(request);
+    String jwt = jwtBuilder.getJwtFromCookies(request);
     return jwt;
   }
 }
