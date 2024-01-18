@@ -12,20 +12,23 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 @Slf4j
 
 public class EmailSendApplication {
-  
-  public static void main(String args[]) {
-    WireMockServer wireMockServer = new WireMockServer(options().port(8082));
-    wireMockServer.start();
-    
-    wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/email/send"))
-            .willReturn(aResponse().withStatus(200)
 
-    .withStatus(HttpStatus.OK.value())
-            .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-            .withBody("Email sent")));
-    log.info("Server Start");
-    log.info(wireMockServer.toString());
-    log.info(wireMockServer.getStubMappings().toString());
-    
-  }
+
+    public static void main(String args[]) {
+
+
+        WireMockServer wireMockServer = new WireMockServer(options().port(8081));
+        wireMockServer.start();
+
+        wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("http://localhost:8080/email/send"))
+                .willReturn(aResponse().withStatus(200)
+
+                        .withStatus(HttpStatus.OK.value())
+                        .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                        .withBody("Email Json")));
+        log.info("Server Start");
+        log.info(wireMockServer.toString());
+        log.info(wireMockServer.getStubMappings().toString());
+
+    }
 }

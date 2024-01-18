@@ -10,9 +10,9 @@ CREATE TABLE user_details
     id              Long auto_increment PRIMARY KEY,
     name            VARCHAR(100),
     email           VARCHAR(100),
-    status          VARCHAR(100),
+    status          VARCHAR(20),
     password        VARCHAR(100),
-    role            VARCHAR(100),
+    role            VARCHAR(20),
     organisation_id Long
 );
 

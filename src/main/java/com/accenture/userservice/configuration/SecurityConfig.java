@@ -11,17 +11,15 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 
 @EnableMethodSecurity
 
-public class SecurityConfig { // extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
   
   UserService userService;
   
@@ -36,13 +34,7 @@ public class SecurityConfig { // extends WebSecurityConfigurerAdapter {
     return new AuthTokenFilter();
   }
   
-  @Bean
-  public WebSecurityCustomizer webSecurityCustomizer() {
-    return (web) -> web.ignoring()
-            .requestMatchers(new AntPathRequestMatcher("/h2-console/**"))
-            .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**"));
-  }
-  
+
   @Bean
   public DaoAuthenticationProvider authenticationProvider() {
     DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -62,11 +54,18 @@ public class SecurityConfig { // extends WebSecurityConfigurerAdapter {
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
-  
+
+  @Bean
+  public PasswordEncoder passwordEncoder2() {
+    return new BCryptPasswordEncoder();
+  }
+
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.authorizeHttpRequests((authorize) -> authorize
             .requestMatchers("/**").permitAll().anyRequest().authenticated()
+                //    .requestMatchers("/api/organisation/**").aut
+            //check authorization here
     
     ).csrf(csrf -> csrf
             .ignoringRequestMatchers("/**"));

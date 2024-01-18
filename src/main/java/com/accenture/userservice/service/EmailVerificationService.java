@@ -43,8 +43,11 @@ public class EmailVerificationService {
     }
 
     public void sendEmailVerificationCode(User user) throws Exception {
-        // 6 digit token generation
-        int token = new Random().nextInt(userServiceGlobalProperties.getToken_originValue(), userServiceGlobalProperties.getToken_boundValue());
+
+        int token = 0;
+        for (int i = 0 ; i < userServiceGlobalProperties.getTokenDigits() ; i++){
+            token+=(new Random().nextInt(10)*Math.pow(10, i));
+        }
         EmailVerification emailVerification = new EmailVerification();
         emailVerification.setUser(user);
         emailVerification.setToken(token);
@@ -60,12 +63,14 @@ public class EmailVerificationService {
     }
 
     public EmailVerificationDto checkEmailVerification(Long userId, int requestToken) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ServiceRuntimeException(ErrorCodeEnum.USER_NOT_FOUND,ErrorCodeEnum.USER_NOT_FOUND.getTemplate(),userId.toString()));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ServiceRuntimeException(ErrorCodeEnum.USER_NOT_FOUND, userId));
         EmailVerification emailVerification = emailVerificationRepository
-                .findById(userId).orElseThrow(() -> new ServiceRuntimeException(ErrorCodeEnum.USER_NOT_FOUND,ErrorCodeEnum.USER_NOT_FOUND.getTemplate(),userId.toString()));
+                .findById(userId).orElseThrow(() -> new ServiceRuntimeException(ErrorCodeEnum.USER_NOT_FOUND, userId));
 
         int totalAttempts = emailVerification.getTotalAttempts();
         int token = emailVerification.getToken();
+        int remainingAttempts = userServiceGlobalProperties.getMaxAttempts() - emailVerification.getTotalAttempts();
+
         EmailVerificationDto emailVerificationDto = new EmailVerificationDto();
         // Saving total_attempts session to table
         emailVerification.setTotalAttempts(totalAttempts + 1);
@@ -81,6 +86,7 @@ public class EmailVerificationService {
                     emailVerificationDto.setErrorCode(ErrorCodeEnum.SUCCESS);
                 } else {
                     emailVerificationDto.setErrorCode(ErrorCodeEnum.TOKEN_MISMATCH);
+                    emailVerificationDto.setRemainingAttempts(remainingAttempts);
                 }
             }
         } else {
@@ -88,8 +94,6 @@ public class EmailVerificationService {
             userRepository.deleteById(userId);
             emailVerificationDto.setErrorCode(ErrorCodeEnum.TOTAL_ATTEMPTS_OVER);
         }
-        int remainingAttempts = userServiceGlobalProperties.getMaxAttempts() - emailVerification.getTotalAttempts();
-        emailVerificationDto.setRemainingAttempts(remainingAttempts);
         return emailVerificationDto;
     }
 }

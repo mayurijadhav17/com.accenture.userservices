@@ -12,7 +12,10 @@ import java.nio.file.AccessDeniedException;
 @ControllerAdvice
 public class CustomExceptionHandler {
 
+public CustomExceptionHandler()
+{
 
+}
     @ExceptionHandler(ServiceRuntimeException.class)
     public @ResponseBody ErrorDto handleServiceRuntimeException(final ServiceRuntimeException exception) {
         var errorDto = new ErrorDto();
@@ -21,18 +24,20 @@ public class CustomExceptionHandler {
         log.error(exception.getStackTrace().toString());
         return errorDto;
     }
-
-    @ExceptionHandler(NullPointerException.class)
-    public @ResponseBody ErrorDto handleNullPointerException(final NullPointerException exception) {
+//add constructor for common code errordto
+    @ExceptionHandler(Throwable.class)
+    public @ResponseBody ErrorDto handleNullPointerException(final Throwable exception) {
         var errorDto = new ErrorDto();
         errorDto.setErrorMessage(exception.getMessage());
-       log.error(exception.getStackTrace().toString());
+       // errorDto.setErrorCode(ErrorCodeEnum.GENERAL_ERROR);
+       log.error("Internal Server Error",exception);
         return errorDto;
     }
     @ExceptionHandler(AccessDeniedException.class)
     public @ResponseBody ErrorDto handleAuthorizationException(final AccessDeniedException exception) {
         var errorDto = new ErrorDto();
         errorDto.setErrorMessage(exception.getMessage());
+        //add custom error code
         log.error(exception.getStackTrace().toString());
         return errorDto;
     }

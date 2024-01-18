@@ -8,9 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Data
 public class UserServiceGlobalProperties {
-  int maxAttempts = 3;
-  int expiration = 1440;
-  int token_originValue =100000;
-  int token_boundValue=999999;
-
+    int maxAttempts = 3;
+    int expiration = 1440;
+    int tokenDigits = 6;
 }

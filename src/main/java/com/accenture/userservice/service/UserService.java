@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@Service(value = "UserServiceBean")
 @Slf4j
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
@@ -31,15 +31,14 @@ public class UserService implements UserDetailsService {
     public User createUser(User user) throws Exception {
 
         if (userRepository.existsUserByEmail(user.getEmail())) {
-            throw new ServiceRuntimeException(ErrorCodeEnum.EMAIL_EXISTS,ErrorCodeEnum.EMAIL_EXISTS.getTemplate(), user.getEmail());
+            throw new ServiceRuntimeException(ErrorCodeEnum.EMAIL_EXISTS, user.getEmail());
         }
         user.setStatus(UserStatusEnum.INACTIVE);
         String domain = getDomain(user.getEmail());
         if (!organisationRepository.existsByDomain(domain)) {
-            throw new ServiceRuntimeException(ErrorCodeEnum.EMAIL_INVALID,ErrorCodeEnum.EMAIL_INVALID.getTemplate(),domain);
+            throw new ServiceRuntimeException(ErrorCodeEnum.EMAIL_INVALID, domain);
         }
-        Organisation organisation = organisationRepository.findByDomain(domain)
-                .orElseThrow(() -> new ServiceRuntimeException(ErrorCodeEnum.ORGANISATION_NOT_FOUND,ErrorCodeEnum.ORGANISATION_NOT_FOUND.getTemplate(), domain));
+        Organisation organisation = organisationRepository.findByDomain(domain).orElseThrow(() -> new ServiceRuntimeException(ErrorCodeEnum.ORGANISATION_NOT_FOUND, domain));
         user.setOrganisation(organisation);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(user.getRole());
@@ -52,8 +51,7 @@ public class UserService implements UserDetailsService {
     }
 
     public User getUserById(Long id) {
-        return userRepository.findById(id).
-                orElseThrow(() -> new ServiceRuntimeException(ErrorCodeEnum.USER_NOT_FOUND,ErrorCodeEnum.USER_NOT_FOUND.getTemplate(), id.toString()));
+        return userRepository.findById(id).orElseThrow(() -> new ServiceRuntimeException(ErrorCodeEnum.USER_NOT_FOUND, id));
     }
 
     public List<User> getUsers() {
@@ -62,28 +60,26 @@ public class UserService implements UserDetailsService {
 
     public void deleteUserById(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new ServiceRuntimeException(ErrorCodeEnum.USER_NOT_FOUND,ErrorCodeEnum.USER_NOT_FOUND.getTemplate(), id.toString());
+            throw new ServiceRuntimeException(ErrorCodeEnum.USER_NOT_FOUND, id);
         }
         userRepository.deleteById(id);
     }
 
-    public User updateUserDetails(User userRes, Long id) throws Exception {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ServiceRuntimeException(ErrorCodeEnum.USER_NOT_FOUND,ErrorCodeEnum.USER_NOT_FOUND.getTemplate(), id.toString()));
+    public User updateUserDetails(User userRes, Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new ServiceRuntimeException(ErrorCodeEnum.USER_NOT_FOUND, ErrorCodeEnum.USER_NOT_FOUND.getTemplate(), id.toString()));
         if (userRepository.existsUserByEmail(userRes.getEmail())) {
-            throw new ServiceRuntimeException( ErrorCodeEnum.EMAIL_EXISTS,ErrorCodeEnum.EMAIL_EXISTS.getTemplate(), user.getEmail());
+            throw new ServiceRuntimeException(ErrorCodeEnum.EMAIL_EXISTS, ErrorCodeEnum.EMAIL_EXISTS.getTemplate(), user.getEmail());
         }
         user.setName(userRes.getName());
         user.setEmail(user.getEmail());
         String domain = getDomain(userRes.getEmail());
-        Organisation organisation = organisationRepository.findByDomain(domain)
-                .orElseThrow(() -> new ServiceRuntimeException(ErrorCodeEnum.ORGANISATION_NOT_FOUND,ErrorCodeEnum.ORGANISATION_NOT_FOUND.getTemplate(), domain));
+        Organisation organisation = organisationRepository.findByDomain(domain).orElseThrow(() -> new ServiceRuntimeException(ErrorCodeEnum.ORGANISATION_NOT_FOUND, domain));
         user.setOrganisation(organisation);
         return userRepository.save(user);
     }
 
     public EmailVerificationDto emailVerificationToken(String email, int requestToken) throws Exception {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new ServiceRuntimeException(ErrorCodeEnum.USER_NOT_FOUND,ErrorCodeEnum.USER_NOT_FOUND.getTemplate(), email));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new ServiceRuntimeException(ErrorCodeEnum.USER_NOT_FOUND, email));
 
         return emailVerificationService.checkEmailVerification(user.getId(), requestToken);
     }
@@ -94,10 +90,8 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     @Override
-    public UserDetails loadUserByUsername(String username)
-            throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new ServiceRuntimeException(ErrorCodeEnum.USER_NOT_FOUND,ErrorCodeEnum.USER_NOT_FOUND.getTemplate(), username ));
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(username).orElseThrow(() -> new ServiceRuntimeException(ErrorCodeEnum.USER_NOT_FOUND, username));
 
         return new UserDetailsImpl(user);
     }

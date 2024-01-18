@@ -3,7 +3,7 @@ package com.accenture.userservice.model;
 public enum ErrorCodeEnum {
     EMAIL_EXISTS("Email address already exists"),
     EMAIL_INVALID("Email address is invalid"),
-    USER_NOT_FOUND("User not found "),
+    USER_NOT_FOUND("User not found,id={0}"),
     ORGANISATION_NOT_FOUND("Organisation not found "),
 
 
@@ -11,7 +11,8 @@ public enum ErrorCodeEnum {
     SUCCESS("SUCCESS"),
     TOTAL_ATTEMPTS_OVER("Total attempts over for email verification"),
     TOKEN_MISMATCH("TOKEN_MISMATCH"),
-    CODE_EXPIRED("CODE_EXPIRED");
+    CODE_EXPIRED("CODE_EXPIRED"),
+    GENERAL_ERROR("Internal Server Error");
 
 
     private String template;
