@@ -26,7 +26,7 @@ public class CustomExceptionHandler {
     public @ResponseBody ErrorDto handleNullPointerException(final Throwable exception) {
         var errorDto = new ErrorDto();
         errorDto.setErrorMessage(exception.getMessage());
-        errorDto.setErrorCode(ErrorCodeEnum.GENERAL_ERROR.name());
+        errorDto.setErrorCode(ErrorCodeEnum.SERVER_ERROR.name());
         log.error("Internal Server Error", exception);
         return errorDto;
     }
