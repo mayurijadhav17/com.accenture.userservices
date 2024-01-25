@@ -4,7 +4,7 @@ user-registration:
   tokenSize: 6
 
 user-security:
-  jwtSecret : ======================userServiceKey======================
+  jwtSecret: ======================userServiceKey======================
   jwtExpirationMs: 900000
   jwtCookie: user-jwt-token
 

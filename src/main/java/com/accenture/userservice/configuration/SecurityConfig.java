@@ -20,68 +20,67 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 
 public class SecurityConfig {
-  
-  UserService userService;
-  
-  @Autowired
-  public SecurityConfig(@Lazy UserService userService) {
-    this.userService = userService;
-    
-  }
-  
-  @Bean
-  public AuthTokenFilter authenticationJwtTokenFilter() {
-    return new AuthTokenFilter();
-  }
-  
 
-  @Bean
-  public DaoAuthenticationProvider authenticationProvider() {
-    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-    
-    authProvider.setUserDetailsService(userService);
-    authProvider.setPasswordEncoder(passwordEncoder());
-    
-    return authProvider;
-  }
-  
-  @Bean
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-    return authConfig.getAuthenticationManager();
-  }
-  
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
+    UserService userService;
 
-  @Bean
-  public PasswordEncoder passwordEncoder2() {
-    return new BCryptPasswordEncoder();
-  }
+    @Autowired
+    public SecurityConfig(@Lazy UserService userService) {
+        this.userService = userService;
 
-  @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.authorizeHttpRequests((authorize) -> authorize
-            .requestMatchers("/h2-console/**").permitAll()
-            .requestMatchers("/**").permitAll().
+    }
+
+    @Bean
+    public AuthTokenFilter authenticationJwtTokenFilter() {
+        return new AuthTokenFilter();
+    }
+
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+
+        authProvider.setUserDetailsService(userService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+
+        return authProvider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder2() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/**").permitAll().
 //            .requestMatchers(HttpMethod.POST, "/api/organisation").hasRole("ADMIN")
 //            .requestMatchers(HttpMethod.POST, "/api/user").permitAll()
 //            .requestMatchers(HttpMethod.GET, "/api/user").hasRole("ADMIN")
 //            .requestMatchers(HttpMethod.PUT, "/api/user").hasRole("ADMIN")
 //            .requestMatchers(HttpMethod.DELETE, "/api/user").hasRole("ADMIN").
+        anyRequest().authenticated()
+        ).csrf(csrf -> csrf
+                .ignoringRequestMatchers("/**"));
 
-            anyRequest().authenticated()
-    ).csrf(csrf -> csrf
-            .ignoringRequestMatchers("/**"));
-    
-    // fix H2 database console: Refused to display ' in a frame because it set 'X-Frame-Options' to 'deny'
-    http.headers(headers -> headers.frameOptions(frameOption -> frameOption.sameOrigin()));
-    
-    http.authenticationProvider(authenticationProvider());
-    
-   // http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-    
-    return http.build();
-  }
+        // fix H2 database console: Refused to display ' in a frame because it set 'X-Frame-Options' to 'deny'
+        http.headers(headers -> headers.frameOptions(frameOption -> frameOption.sameOrigin()));
+
+        http.authenticationProvider(authenticationProvider());
+
+        // http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
 }

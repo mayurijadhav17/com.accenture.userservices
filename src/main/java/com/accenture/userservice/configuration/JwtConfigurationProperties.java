@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 @Data
 public class JwtConfigurationProperties {
 
-    String jwtSecret ;
-    int jwtExpirationMs ;
-    String jwtCookie ;
+    String jwtSecret;
+    int jwtExpirationMs;
+    String jwtCookie;
 }
 
 
