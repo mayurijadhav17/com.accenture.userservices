@@ -22,19 +22,16 @@ public class UserController {
   }
   
   @GetMapping("/{id}")
-  @PreAuthorize("hasRole('USER')")
   public User getUserById(@PathVariable Long id) {
     return userService.getUserById(id);
   }
   
   @GetMapping
-  @PreAuthorize("hasRole('USER')")
   public List<User> getAllUsers() {
     return userService.getUsers();
   }
   
   @PutMapping("{id}")
-  @PreAuthorize("hasRole('ADMIN')")
   public User updateUser(@RequestBody @Valid User user, @PathVariable Long id) throws Exception {
     return userService.updateUserDetails(user, id);
   }

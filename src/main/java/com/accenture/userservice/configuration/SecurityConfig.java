@@ -63,10 +63,15 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.authorizeHttpRequests((authorize) -> authorize
-            .requestMatchers("/**").permitAll().anyRequest().authenticated()
-                //    .requestMatchers("/api/organisation/**").aut
-            //check authorization here
-    
+            .requestMatchers("/h2-console/**").permitAll()
+            .requestMatchers("/**").permitAll().
+//            .requestMatchers(HttpMethod.POST, "/api/organisation").hasRole("ADMIN")
+//            .requestMatchers(HttpMethod.POST, "/api/user").permitAll()
+//            .requestMatchers(HttpMethod.GET, "/api/user").hasRole("ADMIN")
+//            .requestMatchers(HttpMethod.PUT, "/api/user").hasRole("ADMIN")
+//            .requestMatchers(HttpMethod.DELETE, "/api/user").hasRole("ADMIN").
+
+            anyRequest().authenticated()
     ).csrf(csrf -> csrf
             .ignoringRequestMatchers("/**"));
     

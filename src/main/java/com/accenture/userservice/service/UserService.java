@@ -36,7 +36,7 @@ public class UserService implements UserDetailsService {
         user.setStatus(UserStatusEnum.INACTIVE);
         String domain = getDomain(user.getEmail());
         if (!organisationRepository.existsByDomain(domain)) {
-            throw new ServiceRuntimeException(ErrorCodeEnum.EMAIL_INVALID, domain);
+            throw new ServiceRuntimeException(ErrorCodeEnum.EMAIL_INVALID, user.getEmail());
         }
         Organisation organisation = organisationRepository.findByDomain(domain).orElseThrow(() -> new ServiceRuntimeException(ErrorCodeEnum.ORGANISATION_NOT_FOUND, domain));
         user.setOrganisation(organisation);

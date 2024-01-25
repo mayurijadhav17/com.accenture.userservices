@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 public class JwtConfigurationProperties {
 
     String jwtSecret ;
-    int jwtExpirationMs = 900000;
-    String jwtCookie = "user-jwt-token";
+    int jwtExpirationMs ;
+    String jwtCookie ;
 }
 
 
