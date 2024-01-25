@@ -20,7 +20,7 @@ public class EmailSendApplication {
         WireMockServer wireMockServer = new WireMockServer(options().port(8081));
         wireMockServer.start();
 
-        wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("http://localhost:8080/email/send"))
+        wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/email/send"))
                 .willReturn(aResponse().withStatus(200)
 
                         .withStatus(HttpStatus.OK.value())

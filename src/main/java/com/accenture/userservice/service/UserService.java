@@ -84,7 +84,7 @@ public class UserService implements UserDetailsService {
         return emailVerificationService.checkEmailVerification(user.getId(), requestToken);
     }
 
-    private String getDomain(String email) {
+    public String getDomain(String email) {
         return StringUtils.substringAfter(email, "@");
     }
 
