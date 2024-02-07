@@ -43,21 +43,15 @@ public class EmailVerificationService {
     }
 
     public void sendEmailVerificationCode(User user) throws Exception {
+        int token = new Random().nextInt((int) Math.pow(10,userServiceGlobalProperties.getTokenSize()-1), (int) Math.pow(10,userServiceGlobalProperties.getTokenSize()));
 
-        int token = 0;
-        for (int i = 0 ; i < userServiceGlobalProperties.getTokenSize() ; i++){
-            token+=(new Random().nextInt(10)*Math.pow(10, i));
-        }
         EmailVerification emailVerification = new EmailVerification();
         emailVerification.setUser(user);
         emailVerification.setToken(token);
         emailVerification.setExpiryDate(calculateExpiryDate(userServiceGlobalProperties.getExpiration()));
         emailVerification.setTotalAttempts(0);
         emailVerificationRepository.save(emailVerification);
-        SendEmailRequestDto sendEmailRequestDto = new SendEmailRequestDto();
-        sendEmailRequestDto.setFromEmail("test@accenture.com");
-        sendEmailRequestDto.setToEmail(user.getEmail());
-        sendEmailRequestDto.setText("Token for email verification :" + token);
+        SendEmailRequestDto sendEmailRequestDto = new SendEmailRequestDto("test@accenture.com",user.getEmail(),"Email Verification code", "Token for email verification :"+token);
         //feign client for send email
         emailClient.sendEmail(sendEmailRequestDto);
     }
