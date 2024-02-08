@@ -14,9 +14,7 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(ServiceRuntimeException.class)
     public @ResponseBody ErrorDto handleServiceRuntimeException(final ServiceRuntimeException exception) {
-        var errorDto = new ErrorDto();
-        errorDto.setErrorMessage(exception.getMessage());
-        errorDto.setErrorCode(exception.getErrorCode());
+        var errorDto = new ErrorDto(exception.getMessage(), exception.getErrorCode());
         log.error("Service Exception", exception);
         return errorDto;
     }
@@ -24,9 +22,7 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(Throwable.class)
     public @ResponseBody ErrorDto handleNullPointerException(final Throwable exception) {
-        var errorDto = new ErrorDto();
-        errorDto.setErrorMessage(exception.getMessage());
-        errorDto.setErrorCode(ErrorCodeEnum.SERVER_ERROR.name());
+        var errorDto = new ErrorDto(exception.getMessage(), ErrorCodeEnum.SERVER_ERROR.name());
         log.error("Internal Server Error", exception);
         return errorDto;
     }
